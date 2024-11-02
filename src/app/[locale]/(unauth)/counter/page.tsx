@@ -4,7 +4,6 @@ import { getTranslations } from 'next-intl/server';
 import { Suspense } from 'react';
 
 import { CounterForm } from '@/components/CounterForm';
-import { CurrentCount } from '@/components/CurrentCount';
 
 export async function generateMetadata(props: { params: { locale: string } }) {
   const t = await getTranslations({
@@ -27,7 +26,7 @@ const Counter = () => {
 
       <div className="mt-3">
         <Suspense fallback={<p>{t('loading_counter')}</p>}>
-          <CurrentCount />
+
         </Suspense>
       </div>
 
