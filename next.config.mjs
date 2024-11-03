@@ -23,9 +23,18 @@ export default withSentryConfig(
         dirs: ['.'],
       },
       poweredByHeader: false,
-      reactStrictMode: true,
+      reactStrictMode: false,
       experimental: {
         serverComponentsExternalPackages: ['@electric-sql/pglite'],
+      },
+      images: {
+        domains: [
+          'uploadthing.com',
+          'utfs.io',
+          'img.clerk.com',
+          'subdomain',
+          'files.stripe.com',
+        ],
       },
     }),
   ),

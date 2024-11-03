@@ -4,14 +4,14 @@ import { z } from 'zod';
 // Don't add NODE_ENV into T3 Env, it changes the tree-shaking behavior
 export const Env = createEnv({
   server: {
-    CLERK_SECRET_KEY: z.string().min(1),
+    CLERK_SECRET_KEY: z.string().optional(),
     DATABASE_URL: z.string().optional(),
     LOGTAIL_SOURCE_TOKEN: z.string().optional(),
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.string().optional(),
-    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
-    NEXT_PUBLIC_CLERK_SIGN_IN_URL: z.string().min(1),
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().optional(),
+    NEXT_PUBLIC_CLERK_SIGN_IN_URL: z.string().optional(),
   },
   shared: {
     NODE_ENV: z.enum(['test', 'development', 'production']).optional(),

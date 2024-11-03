@@ -1,5 +1,6 @@
 import { enUS, frFR } from '@clerk/localizations';
 import { ClerkProvider } from '@clerk/nextjs';
+import { dark } from '@clerk/themes';
 
 import { AppConfig } from '@/utils/AppConfig';
 
@@ -26,6 +27,10 @@ export default function AuthLayout(props: {
 
   return (
     <ClerkProvider
+      dynamic
+      appearance={{
+        baseTheme: dark,
+      }}
       localization={clerkLocale}
       signInUrl={signInUrl}
       signUpUrl={signUpUrl}
