@@ -86,12 +86,12 @@ async function afterAuth(req: any) {
   //   return NextResponse.rewrite(new URL('/site', req.url));
   // }
 
-  if (
-    url.pathname.startsWith('/agency')
-    || url.pathname.startsWith('/subaccount')
-  ) {
-    return NextResponse.rewrite(new URL(`${pathWithSearchParams}`, req.url));
-  }
+  // if (
+  //   url.pathname.startsWith('/agency')
+  //   || url.pathname.startsWith('/subaccount')
+  // ) {
+  //   return NextResponse.rewrite(new URL(`${pathWithSearchParams}`, req.url));
+  // }
   return intlMiddleware(req);
 }
 
