@@ -27,7 +27,6 @@ export default function AuthLayout(props: {
 
   return (
     <ClerkProvider
-      dynamic
       appearance={{
         baseTheme: dark,
       }}
