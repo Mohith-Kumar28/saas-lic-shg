@@ -46,6 +46,15 @@ export const getAuthUserDetails = async (): Promise<User | undefined> => {
   return userData as User;
 };
 
+export const getClerkAuthUserDetails = async () => {
+  const user = await currentUser();
+  if (!user) {
+    return;
+  }
+
+  return user;
+};
+
 /**
  * Saves an activity log notification for the specified agency, description, and optional sub-account.
  *

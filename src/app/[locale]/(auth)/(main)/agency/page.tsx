@@ -5,7 +5,7 @@ import React from 'react';
 import AgencyDetails from '@/components/forms/agency-details';
 import { roles, urls } from '@/constants/global-constants';
 import { logger } from '@/lib/Logger';
-import { getAuthUserDetails, verifyAndAcceptInvitation } from '@/lib/queries';
+import { getAuthUserDetails, getClerkAuthUserDetails, verifyAndAcceptInvitation } from '@/lib/queries';
 import { isSubAccountGuest, isSubAccountUser } from '@/utils/Helpers';
 
 const Page = async ({
@@ -41,12 +41,12 @@ const Page = async ({
       return <div>Not authorized</div>;
     }
   }
-  // const authUser = await currentUser();
+  const authUser = await getClerkAuthUserDetails();
+
   return (
     <div className="mt-4 flex items-center justify-center">
-
       <AgencyDetails
-        data={{ companyEmail: user?.email }}
+        data={{ companyEmail: authUser?.emailAddresses[0]?.emailAddress }}
       />
     </div>
   );

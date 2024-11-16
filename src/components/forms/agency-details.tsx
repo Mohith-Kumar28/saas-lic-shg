@@ -18,7 +18,6 @@ import {
   upsertAgency,
 } from '@/lib/queries';
 
-import FileUpload from '../global/file-upload';
 import Loading from '../global/loading';
 import {
   AlertDialog,
@@ -65,7 +64,7 @@ const FormSchema = z.object({
   zipCode: z.string().min(1),
   state: z.string().min(1),
   country: z.string().min(1),
-  agencyLogo: z.string().min(1),
+  agencyLogo: z.string().optional().nullable(),
 });
 
 const AgencyDetails = ({ data }: Props) => {
@@ -99,40 +98,40 @@ const AgencyDetails = ({ data }: Props) => {
   const handleSubmit = async (values: z.infer<typeof FormSchema>) => {
     try {
       let custId;
-      if (!data?.id) {
-        // const bodyData = {
-        //   email: values.companyEmail,
-        //   name: values.name,
-        //   shipping: {
-        //     address: {
-        //       city: values.city,
-        //       country: values.country,
-        //       line1: values.address,
-        //       postal_code: values.zipCode,
-        //       state: values.zipCode,
-        //     },
-        //     name: values.name,
-        //   },
-        //   address: {
-        //     city: values.city,
-        //     country: values.country,
-        //     line1: values.address,
-        //     postal_code: values.zipCode,
-        //     state: values.zipCode,
-        //   },
-        // };
+      // if (!data?.id) {
+      // const bodyData = {
+      //   email: values.companyEmail,
+      //   name: values.name,
+      //   shipping: {
+      //     address: {
+      //       city: values.city,
+      //       country: values.country,
+      //       line1: values.address,
+      //       postal_code: values.zipCode,
+      //       state: values.zipCode,
+      //     },
+      //     name: values.name,
+      //   },
+      //   address: {
+      //     city: values.city,
+      //     country: values.country,
+      //     line1: values.address,
+      //     postal_code: values.zipCode,
+      //     state: values.zipCode,
+      //   },
+      // };
 
-        // const customerResponse = await fetch('/api/stripe/create-customer', {
-        //   method: 'POST',
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //   },
-        //   body: JSON.stringify(bodyData),
-        // });
-        // const customerData: { customerId: string }
-        //   = await customerResponse.json();
-        // custId = customerData.customerId;
-      }
+      // const customerResponse = await fetch('/api/stripe/create-customer', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify(bodyData),
+      // });
+      // const customerData: { customerId: string }
+      //   = await customerResponse.json();
+      // custId = customerData.customerId;
+      // }
 
       await initUser({ role: roles.AGENCY_OWNER });
       // if (!data?.customerId && !custId) {
@@ -143,7 +142,7 @@ const AgencyDetails = ({ data }: Props) => {
         id: data?.id ? data.id : v4(),
         customerId: data?.customerId || custId || '',
         address: values.address,
-        agencyLogo: values.agencyLogo,
+        agencyLogo: values?.agencyLogo || '',
         city: values.city,
         companyPhone: values.companyPhone,
         country: values.country,
@@ -215,7 +214,7 @@ const AgencyDetails = ({ data }: Props) => {
               onSubmit={form.handleSubmit(handleSubmit)}
               className="space-y-4"
             >
-              <FormField
+              {/* <FormField
                 disabled={isLoading}
                 control={form.control}
                 name="agencyLogo"
@@ -232,7 +231,7 @@ const AgencyDetails = ({ data }: Props) => {
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
               <div className="flex gap-4 md:flex-row">
                 <FormField
                   disabled={isLoading}

@@ -2,6 +2,7 @@ import { enUS, frFR } from '@clerk/localizations';
 import { ClerkProvider } from '@clerk/nextjs';
 import { dark } from '@clerk/themes';
 
+import { urls } from '@/constants/global-constants';
 import { AppConfig } from '@/utils/AppConfig';
 
 export default function AuthLayout(props: {
@@ -9,10 +10,10 @@ export default function AuthLayout(props: {
   params: { locale: string };
 }) {
   let clerkLocale = enUS;
-  let signInUrl = '/sign-in';
-  let signUpUrl = '/sign-up';
-  let dashboardUrl = '/dashboard';
-  let afterSignOutUrl = '/';
+  let signInUrl = urls.SIGN_IN;
+  let signUpUrl = urls.SIGN_UP;
+  let agencyUrl = urls.AGENCY;
+  let afterSignOutUrl = urls.HOME;
 
   if (props.params.locale === 'fr') {
     clerkLocale = frFR;
@@ -21,7 +22,7 @@ export default function AuthLayout(props: {
   if (props.params.locale !== AppConfig.defaultLocale) {
     signInUrl = `/${props.params.locale}${signInUrl}`;
     signUpUrl = `/${props.params.locale}${signUpUrl}`;
-    dashboardUrl = `/${props.params.locale}${dashboardUrl}`;
+    agencyUrl = `/${props.params.locale}${agencyUrl}`;
     afterSignOutUrl = `/${props.params.locale}${afterSignOutUrl}`;
   }
 
@@ -33,8 +34,8 @@ export default function AuthLayout(props: {
       localization={clerkLocale}
       signInUrl={signInUrl}
       signUpUrl={signUpUrl}
-      signInFallbackRedirectUrl={dashboardUrl}
-      signUpFallbackRedirectUrl={dashboardUrl}
+      signInFallbackRedirectUrl={agencyUrl}
+      signUpFallbackRedirectUrl={agencyUrl}
       afterSignOutUrl={afterSignOutUrl}
     >
       {props.children}

@@ -11,9 +11,11 @@ const intlMiddleware = createMiddleware({
 });
 
 const isProtectedRoute = createRouteMatcher([
+  '/agency(.*)',
+  '/:locale/agency(.*)',
   '/dashboard(.*)',
   '/:locale/dashboard(.*)',
-  '/api/uploadthing',
+  // '/api/uploadthing',
 ]);
 
 // const isPublicRoute = createRouteMatcher([
