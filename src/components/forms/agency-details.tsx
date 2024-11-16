@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { v4 } from 'uuid';
 import * as z from 'zod';
 
-import { roles } from '@/constants/global';
+import { roles } from '@/constants/global-constants';
 import { useToast } from '@/hooks/use-toast';
 import {
   deleteAgency,

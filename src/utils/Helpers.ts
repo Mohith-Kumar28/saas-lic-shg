@@ -1,6 +1,6 @@
 import type { User } from '@sentry/nextjs';
 
-import { roles } from '@/constants/global';
+import { roles } from '@/constants/global-constants';
 
 import { AppConfig } from './AppConfig';
 

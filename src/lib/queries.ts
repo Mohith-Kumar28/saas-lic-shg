@@ -8,7 +8,7 @@ import type {
 } from '@prisma/client';
 import { redirect } from 'next/navigation';
 
-import { roles, urls } from '@/constants/global';
+import { roles, urls } from '@/constants/global-constants';
 
 import { db } from './DB';
 import { logger } from './Logger';
@@ -289,32 +289,32 @@ export const upsertAgency = async (agency: Agency, _price?: Plan) => {
             {
               name: 'Dashboard',
               icon: 'category',
-              link: `/agency/${agency.id}`,
+              link: `${urls.AGENCY}/${agency.id}`,
             },
             {
               name: 'Launchpad',
               icon: 'clipboardIcon',
-              link: `/agency/${agency.id}/launchpad`,
+              link: `${urls.AGENCY}/${agency.id}${urls.LAUNCHPAD}`,
             },
             {
               name: 'Billing',
               icon: 'payment',
-              link: `/agency/${agency.id}/billing`,
+              link: `${urls.AGENCY}/${agency.id}${urls.BILLING}`,
             },
             {
               name: 'Settings',
               icon: 'settings',
-              link: `/agency/${agency.id}/settings`,
+              link: `${urls.AGENCY}/${agency.id}${urls.SETTINGS}`,
             },
             {
               name: 'Sub Accounts',
               icon: 'person',
-              link: `/agency/${agency.id}/all-subaccounts`,
+              link: `${urls.AGENCY}/${agency.id}${urls.ALL_SUB_ACCOUNTS}`,
             },
             {
               name: 'Team',
               icon: 'shield',
-              link: `/agency/${agency.id}/team`,
+              link: `${urls.AGENCY}/${agency.id}${urls.TEAM}`,
             },
           ],
         },

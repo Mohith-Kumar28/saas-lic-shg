@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import React from 'react';
 
 import AgencyDetails from '@/components/forms/agency-details';
-import { roles, urls } from '@/constants/global';
+import { roles, urls } from '@/constants/global-constants';
 import { logger } from '@/lib/Logger';
 import { getAuthUserDetails, verifyAndAcceptInvitation } from '@/lib/queries';
 import { isSubAccountGuest, isSubAccountUser } from '@/utils/Helpers';
