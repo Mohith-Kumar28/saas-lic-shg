@@ -3,6 +3,7 @@ import '@/styles/global.css';
 import type { Metadata } from 'next';
 import { NextIntlClientProvider, useMessages } from 'next-intl';
 import { unstable_setRequestLocale } from 'next-intl/server';
+import { ThemeProvider } from 'next-themes';
 
 import { AppConfig } from '@/utils/AppConfig';
 
@@ -50,13 +51,20 @@ export default function RootLayout(props: {
   return (
     <html lang={props.params.locale}>
       <body suppressHydrationWarning>
-        <NextIntlClientProvider
-          locale={props.params.locale}
-          messages={messages}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
         >
-          {props.children}
+          <NextIntlClientProvider
+            locale={props.params.locale}
+            messages={messages}
+          >
+            {props.children}
 
-        </NextIntlClientProvider>
+          </NextIntlClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
