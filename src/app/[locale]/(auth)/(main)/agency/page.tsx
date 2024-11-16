@@ -44,12 +44,10 @@ const Page = async ({
   // const authUser = await currentUser();
   return (
     <div className="mt-4 flex items-center justify-center">
-      <div className="max-w-[850px] rounded-xl border p-4">
-        <h1 className="text-4xl"> Create An Agency</h1>
-        <AgencyDetails
-          data={{ companyEmail: user?.email }}
-        />
-      </div>
+
+      <AgencyDetails
+        data={{ companyEmail: user?.email }}
+      />
     </div>
   );
 };
