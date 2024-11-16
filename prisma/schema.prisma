@@ -12,8 +12,8 @@ datasource db {
 enum Role {
   AGENCY_OWNER
   AGENCY_ADMIN
-  SUBACCOUNT_USER
-  SUBACCOUNT_GUEST
+  SUB_ACCOUNT_USER
+  SUB_ACCOUNT_GUEST
 }
 
 enum Icon {
@@ -56,7 +56,7 @@ model User {
   email        String         @unique
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
-  role         Role           @default(SUBACCOUNT_USER)
+  role         Role           @default(SUB_ACCOUNT_USER)
   agencyId     String?
   Agency       Agency?        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
   Permissions  Permissions[]
@@ -372,7 +372,7 @@ model Invitation {
   agencyId String
   Agency   Agency           @relation(fields: [agencyId], references: [id], onDelete: Cascade)
   status   InvitationStatus @default(PENDING)
-  role     Role             @default(SUBACCOUNT_USER)
+  role     Role             @default(SUB_ACCOUNT_USER)
 
   @@index([agencyId])
 }

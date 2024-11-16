@@ -57,5 +57,7 @@
     "pcss",
     "postcss",
     "github-actions-workflow"
-  ]
+  ],
+  "WillLuke.nextjs.addTypesOnSave": true,
+  "WillLuke.nextjs.hasPrompted": true
 }

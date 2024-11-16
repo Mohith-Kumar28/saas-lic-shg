@@ -1,7 +1,7 @@
 import { useTranslations } from 'next-intl';
 import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
 
-import { Sponsors } from '@/components/Sponsors';
+import { Sponsors } from '@/components/template/Sponsors';
 
 export async function generateMetadata(props: { params: { locale: string } }) {
   const t = await getTranslations({

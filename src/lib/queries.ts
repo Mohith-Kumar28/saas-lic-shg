@@ -2,11 +2,13 @@
 
 import { clerkClient, currentUser } from '@clerk/nextjs/server';
 import type {
+  Agency,
+  Plan,
   User,
 } from '@prisma/client';
 import { redirect } from 'next/navigation';
 
-import { Roles } from '@/constants/global';
+import { roles, urls } from '@/constants/global';
 
 import { db } from './DB';
 import { logger } from './Logger';
@@ -16,7 +18,7 @@ import { logger } from './Logger';
  *
  * @returns {Promise<UserData | undefined>} A promise that resolves to the user's data, or undefined if the user is not authenticated.
  */
-export const getAuthUserDetails = async () => {
+export const getAuthUserDetails = async (): Promise<User | undefined> => {
   const user = await currentUser();
   if (!user) {
     return;
@@ -41,7 +43,7 @@ export const getAuthUserDetails = async () => {
     },
   });
 
-  return userData;
+  return userData as User;
 };
 
 /**
@@ -152,7 +154,7 @@ export const saveActivityLogsNotification = async ({
  * @returns The created user record, or null if the user's role is 'AGENCY_OWNER'.
  */
 export const createTeamUser = async (agencyId: string, user: User) => {
-  if (user.role === Roles.AGENCY_OWNER) {
+  if (user.role === roles.AGENCY_OWNER) {
     return null;
   }
   const response = await db.user.create({ data: { ...user } });
@@ -169,7 +171,7 @@ export const createTeamUser = async (agencyId: string, user: User) => {
 export const verifyAndAcceptInvitation = async () => {
   const user = await currentUser();
   if (!user) {
-    return redirect('/sign-in');
+    return redirect(urls.SIGN_IN);
   }
   const invitationExists = await db.invitation.findUnique({
     where: {
@@ -198,7 +200,7 @@ export const verifyAndAcceptInvitation = async () => {
     if (userDetails) {
       await clerkClient.users.updateUserMetadata(user.id, {
         privateMetadata: {
-          role: userDetails.role || Roles.SUBACCOUNT_USER,
+          role: userDetails.role || roles.SUB_ACCOUNT_USER,
         },
       });
 
@@ -217,5 +219,110 @@ export const verifyAndAcceptInvitation = async () => {
       },
     });
     return agency ? agency.agencyId : null;
+  }
+};
+
+export const updateAgencyDetails = async (
+  agencyId: string,
+  agencyDetails: Partial<Agency>,
+) => {
+  const response = await db.agency.update({
+    where: { id: agencyId },
+    data: { ...agencyDetails },
+  });
+  return response;
+};
+
+export const deleteAgency = async (agencyId: string) => {
+  const response = await db.agency.delete({ where: { id: agencyId } });
+  return response;
+};
+
+export const initUser = async (newUser: Partial<User>) => {
+  const user = await currentUser();
+  if (!user) {
+    return;
+  }
+
+  const userData = await db.user.upsert({
+    where: {
+      email: user.emailAddresses[0]?.emailAddress || '',
+    },
+    update: newUser,
+    create: {
+      id: user.id,
+      avatarUrl: user.imageUrl,
+      email: user.emailAddresses[0]?.emailAddress ?? (() => {
+        throw new Error('Email address is undefined');
+      })(),
+      name: `${user.firstName} ${user.lastName}`,
+      role: newUser.role || roles.SUB_ACCOUNT_USER,
+    },
+  });
+
+  await clerkClient.users.updateUserMetadata(user.id, {
+    privateMetadata: {
+      role: newUser.role || roles.SUB_ACCOUNT_USER,
+    },
+  });
+
+  return userData;
+};
+
+export const upsertAgency = async (agency: Agency, _price?: Plan) => {
+  if (!agency.companyEmail) {
+    return null;
+  }
+  try {
+    const agencyDetails = await db.agency.upsert({
+      where: {
+        id: agency.id,
+      },
+      update: agency,
+      create: {
+        users: {
+          connect: { email: agency.companyEmail },
+        },
+        ...agency,
+        SidebarOption: {
+          create: [
+            {
+              name: 'Dashboard',
+              icon: 'category',
+              link: `/agency/${agency.id}`,
+            },
+            {
+              name: 'Launchpad',
+              icon: 'clipboardIcon',
+              link: `/agency/${agency.id}/launchpad`,
+            },
+            {
+              name: 'Billing',
+              icon: 'payment',
+              link: `/agency/${agency.id}/billing`,
+            },
+            {
+              name: 'Settings',
+              icon: 'settings',
+              link: `/agency/${agency.id}/settings`,
+            },
+            {
+              name: 'Sub Accounts',
+              icon: 'person',
+              link: `/agency/${agency.id}/all-subaccounts`,
+            },
+            {
+              name: 'Team',
+              icon: 'shield',
+              link: `/agency/${agency.id}/team`,
+            },
+          ],
+        },
+      },
+    });
+    return agencyDetails;
+  } catch (error) {
+    logger.error(error);
+    return null;
   }
 };

@@ -3,7 +3,7 @@ import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 import { Suspense } from 'react';
 
-import { CounterForm } from '@/components/CounterForm';
+import { CounterForm } from '@/components/template/CounterForm';
 
 export async function generateMetadata(props: { params: { locale: string } }) {
   const t = await getTranslations({
