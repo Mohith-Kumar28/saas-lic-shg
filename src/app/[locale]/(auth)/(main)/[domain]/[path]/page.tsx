@@ -2,7 +2,7 @@ import React from 'react';
 
 const pathpage = () => {
   return (
-    <div>page</div>
+    <div>domainpage</div>
   );
 };
 

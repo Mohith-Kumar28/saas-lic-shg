@@ -259,3 +259,19 @@ export const verifyAndAcceptInvitation = async () => {
     return agency ? agency.agencyId : null;
   }
 };
+
+export const getNotificationAndUser = async (agencyId: string) => {
+  try {
+    const response = await db.notification.findMany({
+      where: { agencyId },
+      include: { User: true },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+    return response;
+  } catch (error) {
+    logger.error(error);
+    return null;
+  }
+};

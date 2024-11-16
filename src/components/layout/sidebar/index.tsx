@@ -1,12 +1,14 @@
 import React from 'react';
 
+// import MenuOptions from './menu-options';
+import { type AccountTypes, accountTypes } from '@/constants/global-constants';
 import { getAuthUserDetails } from '@/lib/queries/user-queries';
 
-// import MenuOptions from './menu-options';
+import MenuOptions from './menu-options';
 
 type Props = {
   id: string;
-  type: 'agency' | 'subaccount';
+  type: AccountTypes;
 };
 
 const Sidebar = async ({ id, type }: Props) => {
@@ -20,44 +22,44 @@ const Sidebar = async ({ id, type }: Props) => {
   }
 
   const details
-    = type === 'agency'
+    = type === accountTypes.AGENCY
       ? user?.Agency
       : user?.Agency.SubAccount.find(subaccount => subaccount.id === id);
 
-  // const isWhiteLabeledAgency = user.Agency.whiteLabel;
+  const isWhiteLabeledAgency = user.Agency.whiteLabel;
   if (!details) {
     return;
   }
 
-  // let sideBarLogo = user.Agency.agencyLogo || '/assets/plura-logo.svg';
+  let sideBarLogo = user.Agency.agencyLogo ?? '/assets/plura-logo.svg';
 
-  // if (!isWhiteLabeledAgency) {
-  //   if (type === 'subaccount') {
-  //     sideBarLogo
-  //       = user?.Agency.SubAccount.find(subaccount => subaccount.id === id)
-  //         ?.subAccountLogo || user.Agency.agencyLogo;
-  //   }
-  // }
+  if (!isWhiteLabeledAgency) {
+    if (type === accountTypes.SUB_ACCOUNT) {
+      sideBarLogo
+        = user?.Agency.SubAccount.find(subaccount => subaccount.id === id)
+          ?.subAccountLogo || user.Agency.agencyLogo || '/assets/plura-logo.svg';
+    }
+  }
 
-  // const sidebarOpt
-  //   = type === 'agency'
-  //     ? user.Agency.SidebarOption || []
-  //     : user.Agency.SubAccount.find(subaccount => subaccount.id === id)
-  //       ?.SidebarOption || [];
+  const sidebarOpt
+    = type === accountTypes.AGENCY
+      ? user.Agency.SidebarOption || []
+      : user.Agency.SubAccount.find(subaccount => subaccount.id === id)
+        ?.SidebarOption || [];
 
-  // const subaccounts = user.Agency.SubAccount.filter(subaccount =>
-  //   user.Permissions.find(
-  //     permission =>
-  //       permission.subAccountId === subaccount.id && permission.access,
-  //   ),
-  // );
+  const subaccounts = user.Agency.SubAccount.filter(subaccount =>
+    user.Permissions.find(
+      permission =>
+        permission.subAccountId === subaccount.id && permission.access,
+    ),
+  );
 
   return (
     <>
-      {/* <MenuOptions
+      <MenuOptions
         defaultOpen={true}
         details={details}
-        id={id}
+        _id={id}
         sidebarLogo={sideBarLogo}
         sidebarOpt={sidebarOpt}
         subAccounts={subaccounts}
@@ -65,12 +67,12 @@ const Sidebar = async ({ id, type }: Props) => {
       />
       <MenuOptions
         details={details}
-        id={id}
+        _id={id}
         sidebarLogo={sideBarLogo}
         sidebarOpt={sidebarOpt}
         subAccounts={subaccounts}
         user={user}
-      /> */}
+      />
     </>
   );
 };
