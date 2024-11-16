@@ -10,13 +10,8 @@ import * as z from 'zod';
 
 import { roles } from '@/constants/global-constants';
 import { useToast } from '@/hooks/use-toast';
-import {
-  deleteAgency,
-  initUser,
-  saveActivityLogsNotification,
-  updateAgencyDetails,
-  upsertAgency,
-} from '@/lib/queries';
+import { deleteAgency, updateAgencyDetails, upsertAgency } from '@/lib/queries/agency-queries';
+import { initUser, saveActivityLogsNotification } from '@/lib/queries/user-queries';
 
 import Loading from '../global/loading';
 import {

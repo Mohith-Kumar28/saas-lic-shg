@@ -5,7 +5,7 @@ import React from 'react';
 import AgencyDetails from '@/components/forms/agency-details';
 import { roles, urls } from '@/constants/global-constants';
 import { logger } from '@/lib/Logger';
-import { getAuthUserDetails, getClerkAuthUserDetails, verifyAndAcceptInvitation } from '@/lib/queries';
+import { getAuthUserDetails, getClerkAuthUserDetails, verifyAndAcceptInvitation } from '@/lib/queries/user-queries';
 import { isSubAccountGuest, isSubAccountUser } from '@/utils/Helpers';
 
 const Page = async ({

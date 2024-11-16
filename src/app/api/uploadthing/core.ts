@@ -1,6 +1,6 @@
 import { createUploadthing, type FileRouter } from 'uploadthing/next';
 
-import { getAuthUserDetails } from '@/lib/queries';
+import { getAuthUserDetails } from '@/lib/queries/user-queries';
 
 const f = createUploadthing();
 
