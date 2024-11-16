@@ -31,15 +31,15 @@ export const getI18nPath = (url: string, locale: string) => {
   return `/${locale}${url}`;
 };
 
-export const isAgencyOwner = (user: User | undefined): boolean => {
+export const isAgencyOwner = (user: User | null | undefined): boolean => {
   return user?.role === roles.AGENCY_OWNER;
 };
-export const isAgencyAdmin = (user: User | undefined): boolean => {
+export const isAgencyAdmin = (user: User | null | undefined): boolean => {
   return user?.role === roles.AGENCY_ADMIN;
 };
-export const isSubAccountGuest = (user: User | undefined): boolean => {
+export const isSubAccountGuest = (user: User | null | undefined): boolean => {
   return user?.role === roles.SUB_ACCOUNT_GUEST;
 };
-export const isSubAccountUser = (user: User | undefined): boolean => {
+export const isSubAccountUser = (user: User | null | undefined): boolean => {
   return user?.role === roles.SUB_ACCOUNT_USER;
 };

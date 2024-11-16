@@ -16,7 +16,7 @@ import { logger } from '../Logger';
  *
  * @returns {Promise<UserData | undefined>} A promise that resolves to the user's data, or undefined if the user is not authenticated.
  */
-export const getAuthUserDetails = async (): Promise<User | undefined> => {
+export const getAuthUserDetails = async () => {
   const user = await currentUser();
   if (!user) {
     return;
@@ -41,7 +41,7 @@ export const getAuthUserDetails = async (): Promise<User | undefined> => {
     },
   });
 
-  return userData as User;
+  return userData;
 };
 
 export const getClerkAuthUserDetails = async () => {
