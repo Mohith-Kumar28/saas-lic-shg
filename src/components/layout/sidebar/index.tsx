@@ -1,22 +1,19 @@
 import React from 'react';
 
+import withAuthChecks from '@/components/wrappers/auth-wrapper';
 // import MenuOptions from './menu-options';
 import { type AccountTypes, accountTypes } from '@/constants/global-constants';
-import { getAuthUserDetails } from '@/lib/queries/user-queries';
+import type { AuthUserTypes } from '@/lib/queries/user-queries';
 
 import MenuOptions from './menu-options';
 
 type Props = {
   id: string;
   type: AccountTypes;
+  user: AuthUserTypes;
 };
 
-const Sidebar = async ({ id, type }: Props) => {
-  const user = await getAuthUserDetails();
-  if (!user) {
-    return null;
-  }
-
+const Sidebar = withAuthChecks(['hasAgency'], async ({ id, type, user }: Props) => {
   if (!user.Agency) {
     return;
   }
@@ -31,13 +28,13 @@ const Sidebar = async ({ id, type }: Props) => {
     return;
   }
 
-  let sideBarLogo = user.Agency.agencyLogo ?? '/assets/plura-logo.svg';
+  let sideBarLogo = user.Agency.agencyLogo ?? '';
 
   if (!isWhiteLabeledAgency) {
     if (type === accountTypes.SUB_ACCOUNT) {
       sideBarLogo
         = user?.Agency.SubAccount.find(subaccount => subaccount.id === id)
-          ?.subAccountLogo || user.Agency.agencyLogo || '/assets/plura-logo.svg';
+          ?.subAccountLogo || user.Agency.agencyLogo || '';
     }
   }
 
@@ -57,7 +54,7 @@ const Sidebar = async ({ id, type }: Props) => {
   return (
     <>
       <MenuOptions
-        defaultOpen={true}
+        defaultOpen
         details={details}
         _id={id}
         sidebarLogo={sideBarLogo}
@@ -75,6 +72,6 @@ const Sidebar = async ({ id, type }: Props) => {
       />
     </>
   );
-};
+});
 
 export default Sidebar;

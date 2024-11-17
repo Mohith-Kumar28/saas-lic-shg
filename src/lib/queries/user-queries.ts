@@ -2,6 +2,7 @@
 
 import { clerkClient, currentUser } from '@clerk/nextjs/server';
 import type {
+  Prisma,
   User,
 } from '@prisma/client';
 import { redirect } from 'next/navigation';
@@ -20,7 +21,28 @@ import { logger } from '../Logger';
  *
  * @returns {Promise<(typeof userData & { isAgencyOwner: boolean; isAgencyAdmin: boolean; isSubAccountGuest: boolean; isSubAccountUser: boolean; }) | null>} The authenticated user's details, or `null` if no user is authenticated.
  */
-export const getAuthUserDetails = async () => {
+
+export type AuthUserTypes = Prisma.UserGetPayload<{
+  include: {
+    Agency: {
+      include: {
+        SidebarOption: true;
+        SubAccount: {
+          include: {
+            SidebarOption: true;
+          };
+        };
+      };
+    };
+    Permissions: true;
+  };
+}> & {
+  isAgencyOwner: boolean;
+  isAgencyAdmin: boolean;
+  isSubAccountGuest: boolean;
+  isSubAccountUser: boolean;
+};
+export const getAuthUserDetails = async (): Promise<AuthUserTypes | null> => {
   const user = await currentUser();
   if (!user) {
     return null;
@@ -52,12 +74,7 @@ export const getAuthUserDetails = async () => {
       isAgencyAdmin: userData.role === roles.AGENCY_ADMIN,
       isSubAccountGuest: userData.role === roles.SUB_ACCOUNT_GUEST,
       isSubAccountUser: userData.role === roles.SUB_ACCOUNT_USER,
-    } as (typeof userData & {
-      isAgencyOwner: boolean;
-      isAgencyAdmin: boolean;
-      isSubAccountGuest: boolean;
-      isSubAccountUser: boolean;
-    }) | null;
+    } as AuthUserTypes;
   };
   return null; // Return null if user is not authenticated
 };

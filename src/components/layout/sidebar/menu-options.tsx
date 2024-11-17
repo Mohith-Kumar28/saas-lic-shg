@@ -25,6 +25,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { icons, urls } from '@/constants/global-constants';
+import type { AuthUserTypes } from '@/lib/queries/user-queries';
 
 type Props = {
   defaultOpen?: boolean;
@@ -32,7 +33,7 @@ type Props = {
   sidebarOpt: AgencySidebarOption[] | SubAccountSidebarOption[];
   sidebarLogo: string;
   details: any;
-  user: any;
+  user: AuthUserTypes;
   _id: string;
 };
 
@@ -138,7 +139,7 @@ const MenuOptions = ({
                               >
                                 <div className="relative w-16">
                                   <Image
-                                    src={user?.Agency?.agencyLogo}
+                                    src={user?.Agency?.agencyLogo || ''}
                                     alt="Agency Logo"
                                     fill
                                     className="rounded-md object-contain"
@@ -160,7 +161,7 @@ const MenuOptions = ({
                                 >
                                   <div className="relative w-16">
                                     <Image
-                                      src={user?.Agency?.agencyLogo}
+                                      src={user?.Agency?.agencyLogo || ''}
                                       alt="Agency Logo"
                                       fill
                                       className="rounded-md object-contain"
