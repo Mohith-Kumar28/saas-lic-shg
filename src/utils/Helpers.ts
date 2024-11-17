@@ -1,7 +1,3 @@
-import type { User } from '@sentry/nextjs';
-
-import { roles } from '@/constants/global-constants';
-
 import { AppConfig } from './AppConfig';
 
 export const getBaseUrl = () => {
@@ -29,17 +25,4 @@ export const getI18nPath = (url: string, locale: string) => {
   }
 
   return `/${locale}${url}`;
-};
-
-export const isAgencyOwner = (user: User | null | undefined): boolean => {
-  return user?.role === roles.AGENCY_OWNER;
-};
-export const isAgencyAdmin = (user: User | null | undefined): boolean => {
-  return user?.role === roles.AGENCY_ADMIN;
-};
-export const isSubAccountGuest = (user: User | null | undefined): boolean => {
-  return user?.role === roles.SUB_ACCOUNT_GUEST;
-};
-export const isSubAccountUser = (user: User | null | undefined): boolean => {
-  return user?.role === roles.SUB_ACCOUNT_USER;
 };

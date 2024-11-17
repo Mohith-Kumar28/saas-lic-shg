@@ -24,7 +24,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { icons } from '@/constants/global-constants';
+import { icons, urls } from '@/constants/global-constants';
 
 type Props = {
   defaultOpen?: boolean;
@@ -68,7 +68,7 @@ const MenuOptions = ({
     >
       <SheetTrigger
         asChild
-        className="felx absolute left-4 top-4 z-[100] md:!hidden"
+        className=" absolute left-4 top-4 z-[100] md:!hidden"
       >
         <Button
           variant="outline"
@@ -126,11 +126,10 @@ const MenuOptions = ({
                 <CommandInput placeholder="Search Accounts..." />
                 <CommandList className="pb-16">
                   <CommandEmpty> No results found</CommandEmpty>
-                  {(user?.role === 'AGENCY_OWNER'
-                    || user?.role === 'AGENCY_ADMIN')
-                    && user?.Agency && (
+                  {(user.isAgencyOwner || user.isAgencyAdmin)
+                  && user?.Agency && (
                     <CommandGroup heading="Agency">
-                      <CommandItem className="broder-[1px] my-2 cursor-pointer rounded-md border-border !bg-transparent p-2 text-primary transition-all hover:!bg-muted">
+                      <CommandItem className="my-2 cursor-pointer rounded-md border  !bg-transparent p-2 text-primary transition-all hover:!bg-muted">
                         {defaultOpen
                           ? (
                               <Link
@@ -156,7 +155,7 @@ const MenuOptions = ({
                           : (
                               <SheetClose asChild>
                                 <Link
-                                  href={`/agency/${user?.Agency?.id}`}
+                                  href={`${urls.AGENCY}/${user?.Agency?.id}`}
                                   className="flex size-full gap-4"
                                 >
                                   <div className="relative w-16">

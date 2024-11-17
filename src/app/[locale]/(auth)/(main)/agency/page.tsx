@@ -6,7 +6,6 @@ import AgencyDetails from '@/components/forms/agency-details';
 import { roles, urls } from '@/constants/global-constants';
 import { logger } from '@/lib/Logger';
 import { getAuthUserDetails, getClerkAuthUserDetails, verifyAndAcceptInvitation } from '@/lib/queries/user-queries';
-import { isSubAccountGuest, isSubAccountUser } from '@/utils/Helpers';
 
 const Page = async ({
   searchParams,
@@ -19,7 +18,7 @@ const Page = async ({
   // get the users details
   const user = await getAuthUserDetails();
   if (agencyId) {
-    if (isSubAccountGuest(user) || isSubAccountUser(user)) {
+    if (user?.isSubAccountGuest || user?.isSubAccountUser) {
       return redirect(urls.SUB_ACCOUNT);
     } else if (user?.role === roles.AGENCY_OWNER || user?.role === roles.AGENCY_ADMIN) {
       if (searchParams.plan) {

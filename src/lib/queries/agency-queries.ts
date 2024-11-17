@@ -26,6 +26,13 @@ export const deleteAgency = async (agencyId: string) => {
   return response;
 };
 
+/**
+ * Upserts an agency record in the database.
+ *
+ * @param agency - The agency object to be upserted.
+ * @param _price - An optional plan object (not used in this function).
+ * @returns The upserted agency details, or `null` if the agency's `companyEmail` is missing.
+ */
 export const upsertAgency = async (agency: Agency, _price?: Plan) => {
   if (!agency.companyEmail) {
     return null;

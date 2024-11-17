@@ -5,8 +5,8 @@ import Unauthorized from '@/components/global';
 import BlurPage from '@/components/global/blur-page';
 import InfoBar from '@/components/global/infobar';
 import Sidebar from '@/components/layout/sidebar';
-import { type AccountTypes, accountTypes } from '@/constants/global-constants';
-import { getClerkAuthUserDetails, getNotificationAndUser, verifyAndAcceptInvitation } from '@/lib/queries/user-queries';
+import { type AccountTypes, accountTypes, urls } from '@/constants/global-constants';
+import { getAuthUserDetails, getNotificationAndUser, verifyAndAcceptInvitation } from '@/lib/queries/user-queries';
 
 type Props = {
   children: React.ReactNode;
@@ -15,19 +15,19 @@ type Props = {
 
 const layout = async ({ children, params }: Props) => {
   const agencyId = await verifyAndAcceptInvitation();
-  const user = await getClerkAuthUserDetails();
+  const user = await getAuthUserDetails();
 
   if (!user) {
-    return redirect('/');
+    return redirect(urls.HOME);
   }
 
   if (!agencyId) {
-    return redirect('/agency');
+    return redirect(urls.AGENCY);
   }
 
   if (
-    user.privateMetadata.role !== 'AGENCY_OWNER'
-    && user.privateMetadata.role !== 'AGENCY_ADMIN'
+    !user.isAgencyAdmin
+    && !user.isAgencyOwner
   ) {
     return <Unauthorized />;
   }

@@ -12,14 +12,18 @@ import { db } from '../DB';
 import { logger } from '../Logger';
 
 /**
- * Retrieves the authenticated user's details, including their associated agency, sidebar options, sub-accounts, and permissions.
+ * Retrieves the authenticated user's details, including their associated agency, sub-accounts, and permissions.
  *
- * @returns {Promise<UserData | undefined>} A promise that resolves to the user's data, or undefined if the user is not authenticated.
+ * This function first retrieves the current authenticated user using the `currentUser()` function from the Clerk SDK. If no user is authenticated, it returns `null`.
+ *
+ * If a user is authenticated, the function then queries the database to retrieve the user's details, including their associated agency, sub-accounts, and permissions. The returned object includes additional properties (`isAgencyOwner`, `isAgencyAdmin`, `isSubAccountGuest`, `isSubAccountUser`) that indicate the user's role.
+ *
+ * @returns {Promise<(typeof userData & { isAgencyOwner: boolean; isAgencyAdmin: boolean; isSubAccountGuest: boolean; isSubAccountUser: boolean; }) | null>} The authenticated user's details, or `null` if no user is authenticated.
  */
 export const getAuthUserDetails = async () => {
   const user = await currentUser();
   if (!user) {
-    return;
+    return null;
   }
 
   const userData = await db.user.findUnique({
@@ -41,7 +45,21 @@ export const getAuthUserDetails = async () => {
     },
   });
 
-  return userData;
+  if (userData) {
+    return {
+      ...userData,
+      isAgencyOwner: userData.role === roles.AGENCY_OWNER,
+      isAgencyAdmin: userData.role === roles.AGENCY_ADMIN,
+      isSubAccountGuest: userData.role === roles.SUB_ACCOUNT_GUEST,
+      isSubAccountUser: userData.role === roles.SUB_ACCOUNT_USER,
+    } as (typeof userData & {
+      isAgencyOwner: boolean;
+      isAgencyAdmin: boolean;
+      isSubAccountGuest: boolean;
+      isSubAccountUser: boolean;
+    }) | null;
+  };
+  return null; // Return null if user is not authenticated
 };
 
 export const getClerkAuthUserDetails = async () => {
@@ -260,6 +278,12 @@ export const verifyAndAcceptInvitation = async () => {
   }
 };
 
+/**
+ * Retrieves a list of notifications and their associated users for the given agency ID, ordered by creation date in descending order.
+ *
+ * @param agencyId - The ID of the agency to retrieve notifications for.
+ * @returns An array of notification objects, each containing the associated user data, or null if an error occurs.
+ */
 export const getNotificationAndUser = async (agencyId: string) => {
   try {
     const response = await db.notification.findMany({
