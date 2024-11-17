@@ -3,20 +3,21 @@ import { redirect } from 'next/navigation';
 import React from 'react';
 
 import AgencyDetails from '@/components/forms/agency-details';
+import withAuthChecks from '@/components/wrappers/auth-wrapper';
 import { roles, urls } from '@/constants/global-constants';
 import { logger } from '@/lib/Logger';
-import { getAuthUserDetails, getClerkAuthUserDetails, verifyAndAcceptInvitation } from '@/lib/queries/user-queries';
+import { type AuthUserTypes, getClerkAuthUserDetails, verifyAndAcceptInvitation } from '@/lib/queries/user-queries';
 
-const Page = async ({
+const AgencyPage = withAuthChecks([], async ({
   searchParams,
+  user,
 }: {
   searchParams: { plan: Plan; state: string; code: string };
+  user: AuthUserTypes;
 }) => {
   const agencyId = await verifyAndAcceptInvitation();
   logger.info(agencyId);
 
-  // get the users details
-  const user = await getAuthUserDetails();
   if (agencyId) {
     if (user?.isSubAccountGuest || user?.isSubAccountUser) {
       return redirect(urls.SUB_ACCOUNT);
@@ -49,6 +50,6 @@ const Page = async ({
       />
     </div>
   );
-};
+});
 
-export default Page;
+export default AgencyPage;

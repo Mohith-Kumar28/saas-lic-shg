@@ -5,17 +5,18 @@ import Unauthorized from '@/components/global';
 import BlurPage from '@/components/global/blur-page';
 import InfoBar from '@/components/global/infobar';
 import Sidebar from '@/components/layout/sidebar';
+import withAuthChecks from '@/components/wrappers/auth-wrapper';
 import { type AccountTypes, accountTypes, urls } from '@/constants/global-constants';
-import { getAuthUserDetails, getNotificationAndUser, verifyAndAcceptInvitation } from '@/lib/queries/user-queries';
+import { type AuthUserTypes, getNotificationAndUser, verifyAndAcceptInvitation } from '@/lib/queries/user-queries';
 
 type Props = {
   children: React.ReactNode;
   params: { agencyId: string };
+  user: AuthUserTypes;
 };
 
-const layout = async ({ children, params }: Props) => {
+const layout = withAuthChecks(['hasAgency'], async ({ children, params, user }: Props) => {
   const agencyId = await verifyAndAcceptInvitation();
-  const user = await getAuthUserDetails();
 
   if (!user) {
     return redirect(urls.HOME);
@@ -55,6 +56,6 @@ const layout = async ({ children, params }: Props) => {
       </div>
     </div>
   );
-};
+});
 
 export default layout;
