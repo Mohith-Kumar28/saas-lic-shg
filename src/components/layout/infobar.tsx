@@ -1,37 +1,43 @@
 'use client';
-import { UserButton } from '@clerk/nextjs';
 import type { Role } from '@prisma/client';
-import React from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
+import { BellIcon } from 'lucide-react';
+import React, { useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import type { NotificationWithUser } from '@/types/global';
+
 // import type { NotificationWithUser } from '@/lib/types';
-import { ModeToggle } from './mode-toggle';
+import { ModeToggle } from '../global/mode-toggle';
+import UserAccountButton from '../molecules/user-account-button';
+import { Card } from '../ui/card';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '../ui/sheet';
+import { Switch } from '../ui/switch';
 
 type Props = {
-  // notifications: NotificationWithUser | [];
+  notifications: NotificationWithUser | [];
   role?: Role;
   className?: string;
   subAccountId?: string;
 };
 
-const InfoBar = ({ className }: Props) => {
-// const InfoBar = ({ notifications, subAccountId, className, role }: Props) => {
-  // const [allNotifications, setAllNotifications] = useState(notifications);
-  // const [showAll, setShowAll] = useState(true);
+const InfoBar = ({ notifications, subAccountId, className, role }: Props) => {
+  const [allNotifications, setAllNotifications] = useState(notifications);
+  const [showAll, setShowAll] = useState(true);
 
-  // const handleClick = () => {
-  //   if (!showAll) {
-  //     setAllNotifications(notifications);
-  //   } else {
-  //     if (notifications?.length !== 0) {
-  //       setAllNotifications(
-  //         notifications?.filter(item => item.subAccountId === subAccountId)
-  //         ?? [],
-  //       );
-  //     }
-  //   }
-  //   setShowAll(prev => !prev);
-  // };
+  const handleClick = () => {
+    if (!showAll) {
+      setAllNotifications(notifications);
+    } else {
+      if (notifications?.length !== 0) {
+        setAllNotifications(
+          notifications?.filter(item => item.subAccountId === subAccountId)
+          ?? [],
+        );
+      }
+    }
+    setShowAll(prev => !prev);
+  };
 
   return (
     <div>
@@ -42,11 +48,11 @@ const InfoBar = ({ className }: Props) => {
         )}
       >
         <div className="ml-auto flex items-center gap-2">
-          <UserButton afterSignOutUrl="/" />
-          {/* <Sheet>
+          <UserAccountButton />
+          <Sheet>
             <SheetTrigger>
               <div className="flex size-9 items-center justify-center rounded-full bg-primary text-white">
-                <Bell size={17} />
+                <BellIcon size={17} />
               </div>
             </SheetTrigger>
             <SheetContent className="mr-4 mt-4 overflow-scroll pr-4">
@@ -104,7 +110,7 @@ const InfoBar = ({ className }: Props) => {
                 </div>
               )}
             </SheetContent>
-          </Sheet> */}
+          </Sheet>
           <ModeToggle />
         </div>
       </div>

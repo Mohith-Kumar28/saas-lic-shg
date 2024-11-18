@@ -3,7 +3,7 @@ import React from 'react';
 
 import Unauthorized from '@/components/global';
 import BlurPage from '@/components/global/blur-page';
-import InfoBar from '@/components/global/infobar';
+import InfoBar from '@/components/layout/infobar';
 import Sidebar from '@/components/layout/sidebar';
 import withAuthChecks from '@/components/wrappers/auth-wrapper';
 import { type AccountTypes, accountTypes, urls } from '@/constants/global-constants';
@@ -47,7 +47,7 @@ const layout = withAuthChecks(['hasAgency'], async ({ children, params, user }: 
       />
       <div className="md:pl-[300px]">
         <InfoBar
-          // notifications={allNoti}
+          notifications={allNoti}
           role={allNoti.User?.role}
         />
         <div className="relative">

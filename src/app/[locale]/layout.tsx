@@ -5,6 +5,7 @@ import { NextIntlClientProvider, useMessages } from 'next-intl';
 import { unstable_setRequestLocale } from 'next-intl/server';
 import { ThemeProvider } from 'next-themes';
 
+import ModalProvider from '@/providers/modal-provider';
 import { AppConfig } from '@/utils/AppConfig';
 
 export const metadata: Metadata = {
@@ -57,12 +58,14 @@ export default function RootLayout(props: {
           enableSystem
           disableTransitionOnChange
         >
+
           <NextIntlClientProvider
             locale={props.params.locale}
             messages={messages}
           >
-            {props.children}
-
+            <ModalProvider>
+              {props.children}
+            </ModalProvider>
           </NextIntlClientProvider>
         </ThemeProvider>
       </body>
