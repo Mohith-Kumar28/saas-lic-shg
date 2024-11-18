@@ -3,6 +3,8 @@ import type {
   Role,
 } from '@prisma/client';
 
+import type { getAuthUserDetails, getUserPermissions } from '@/lib/queries/user-queries';
+
 // Use type safe message keys with `next-intl`
 type Messages = typeof import('../locales/en.json');
 
@@ -23,3 +25,14 @@ export type NotificationWithUser =
     };
   } & Notification)[]
   | undefined;
+
+export type UserWithPermissionsAndSubAccounts = Prisma.PromiseReturnType<
+  typeof getUserPermissions
+>;
+
+export type AuthUserWithAgencySigebarOptionsSubAccounts = Prisma.PromiseReturnType<typeof getAuthUserDetails> & {
+  isAgencyOwner: boolean;
+  isAgencyAdmin: boolean;
+  isSubAccountGuest: boolean;
+  isSubAccountUser: boolean;
+};

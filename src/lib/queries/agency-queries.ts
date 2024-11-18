@@ -10,6 +10,13 @@ import { urls } from '@/constants/global-constants';
 import { db } from '../DB';
 import { logger } from '../Logger';
 
+/**
+ * Updates the details of an agency in the database.
+ *
+ * @param agencyId - The ID of the agency to update.
+ * @param agencyDetails - The partial agency object containing the updated details.
+ * @returns The updated agency details.
+ */
 export const updateAgencyDetails = async (
   agencyId: string,
   agencyDetails: Partial<Agency>,

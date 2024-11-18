@@ -5,7 +5,7 @@ import { BellIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import type { NotificationWithUser } from '@/types/global';
+import type { NotificationWithUser } from '@/types/global-types';
 
 // import type { NotificationWithUser } from '@/lib/types';
 import { ModeToggle } from '../global/mode-toggle';

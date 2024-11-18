@@ -42,7 +42,7 @@ export type AuthUserTypes = Prisma.UserGetPayload<{
   isSubAccountGuest: boolean;
   isSubAccountUser: boolean;
 };
-export const getAuthUserDetails = async (): Promise<AuthUserTypes | null> => {
+export const getAuthUserDetails = async () => {
   const user = await currentUser();
   if (!user) {
     return null;
@@ -74,11 +74,16 @@ export const getAuthUserDetails = async (): Promise<AuthUserTypes | null> => {
       isAgencyAdmin: userData.role === roles.AGENCY_ADMIN,
       isSubAccountGuest: userData.role === roles.SUB_ACCOUNT_GUEST,
       isSubAccountUser: userData.role === roles.SUB_ACCOUNT_USER,
-    } as AuthUserTypes;
+    };
   };
   return null; // Return null if user is not authenticated
 };
 
+/**
+ * Retrieves the details of the authenticated Clerk user.
+ *
+ * @returns {Promise<User | undefined>} - The authenticated user, or undefined if the user is not authenticated.
+ */
 export const getClerkAuthUserDetails = async () => {
   const user = await currentUser();
   if (!user) {
@@ -88,6 +93,15 @@ export const getClerkAuthUserDetails = async () => {
   return user;
 };
 
+/**
+ * Initializes a user in the database. If the user does not exist, it creates a new user entry.
+ * If the user already exists, it updates the user with the provided data.
+ *
+ * @param {Partial<User>} newUser - An object containing the new user data to be updated or created.
+ * @returns {Promise<User | undefined>} - The user data after upsert operation or undefined if the current user is not found.
+ *
+ * @throws {Error} - Throws an error if the email address is undefined.
+ */
 export const initUser = async (newUser: Partial<User>) => {
   const user = await currentUser();
   if (!user) {
@@ -313,6 +327,68 @@ export const getNotificationAndUser = async (agencyId: string) => {
     return response;
   } catch (error) {
     logger.error(error);
+    return null;
+  }
+};
+
+/**
+ * Retrieves the permissions and sub-account information for the user with the specified ID.
+ *
+ * @param userId - The ID of the user to retrieve permissions for.
+ * @returns The user's permissions and sub-account information, or null if the user is not found.
+ */
+export const getUserPermissions = async (userId: string) => {
+  const response = await db.user.findUnique({
+    where: { id: userId },
+    select: { Permissions: { include: { SubAccount: true } } },
+  });
+
+  return response;
+};
+
+export const updateUser = async (user: Partial<User>) => {
+  const response = await db.user.update({
+    where: { email: user.email },
+    data: { ...user },
+  });
+
+  await clerkClient.users.updateUserMetadata(response.id, {
+    privateMetadata: {
+      role: user.role || roles.SUB_ACCOUNT_USER,
+    },
+  });
+
+  return response;
+};
+
+/**
+ * Updates the permissions for a user in a sub-account.
+ *
+ * @param permissionId - The ID of the permission to update, or undefined to create a new permission.
+ * @param userEmail - The email address of the user whose permissions are being updated.
+ * @param subAccountId - The ID of the sub-account the user belongs to.
+ * @param permission - A boolean indicating whether the user should have access or not.
+ * @returns The updated or created permission object, or null if an error occurs.
+ */
+export const changeUserPermissions = async (
+  permissionId: string | undefined,
+  userEmail: string,
+  subAccountId: string,
+  permission: boolean,
+) => {
+  try {
+    const response = await db.permissions.upsert({
+      where: { id: permissionId },
+      update: { access: permission },
+      create: {
+        access: permission,
+        email: userEmail,
+        subAccountId,
+      },
+    });
+    return response;
+  } catch (error) {
+    logger.error('🔴Could not change persmission', error);
     return null;
   }
 };
