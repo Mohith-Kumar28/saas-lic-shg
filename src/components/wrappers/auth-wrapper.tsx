@@ -4,6 +4,7 @@ import { type AuthUserTypes, getAuthUserDetails } from '@/lib/queries/user-queri
 const conditionsMap = {
   isAuthenticated: (user: AuthUserTypes) => !!user,
   hasAgency: (user: AuthUserTypes) => !!user.Agency,
+  hasSubAccount: (user: AuthUserTypes) => !!user.Agency?.SubAccount,
 } as const;
 
 // Create an enum from the keys of conditionsMap
