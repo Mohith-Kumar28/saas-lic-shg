@@ -3,6 +3,7 @@
 import { clerkClient, currentUser } from '@clerk/nextjs/server';
 import type {
   Prisma,
+  Role,
   User,
 } from '@prisma/client';
 import { redirect } from 'next/navigation';
@@ -346,6 +347,12 @@ export const getUserPermissions = async (userId: string) => {
   return response;
 };
 
+/**
+ * Updates a user's information, including their role, in the database and Clerk.
+ *
+ * @param user - A partial user object containing the updated information.
+ * @returns The updated user object.
+ */
 export const updateUser = async (user: Partial<User>) => {
   const response = await db.user.update({
     where: { email: user.email },
@@ -388,7 +395,94 @@ export const changeUserPermissions = async (
     });
     return response;
   } catch (error) {
-    logger.error('🔴Could not change persmission', error);
+    logger.error('🔴Could not change permission', error);
     return null;
   }
+};
+
+/**
+ * Sends an invitation to the specified email address with the given role and agency ID.
+ *
+ * @param role - The role to assign to the invited user.
+ * @param email - The email address of the user to invite.
+ * @param agencyId - The ID of the agency the invited user will be associated with.
+ * @returns The created invitation object.
+ */
+export const sendInvitation = async (
+  role: Role,
+  email: string,
+  agencyId: string,
+) => {
+  const resposne = await db.invitation.create({
+    data: { email, agencyId, role },
+  });
+
+  try {
+    await clerkClient.invitations.createInvitation({
+      emailAddress: email,
+      redirectUrl: `${process.env.NEXT_PUBLIC_URL}${urls.AGENCY}`,
+      publicMetadata: {
+        throughInvitation: true,
+        role,
+      },
+    });
+  } catch (error) {
+    logger.error(error);
+    throw error;
+  }
+
+  return resposne;
+};
+
+/**
+ * Retrieves the first user with the specified agency ID, including their agency and sub-account permissions.
+ *
+ * @param agencyId - The ID of the agency to filter users by.
+ * @returns The first user that matches the specified agency ID, including their agency and sub-account permissions.
+ */
+export const getTeamUsers = async (
+  agencyId: string,
+) => {
+  const response = await db.user.findMany({
+    where: { Agency: { id: agencyId } },
+    include: {
+      Agency: { include: { SubAccount: true } },
+      Permissions: { include: { SubAccount: true } },
+    },
+  });
+
+  return response;
+};
+
+/**
+ * Deletes a user from the database and updates their metadata in Clerk.
+ *
+ * @param userId - The ID of the user to delete.
+ * @returns The deleted user object.
+ */
+export const deleteUser = async (userId: string) => {
+  await clerkClient.users.updateUserMetadata(userId, {
+    privateMetadata: {
+      role: undefined,
+    },
+  });
+  const deletedUser = await db.user.delete({ where: { id: userId } });
+
+  return deletedUser;
+};
+
+/**
+ * Retrieves a user from the database by their unique identifier.
+ *
+ * @param id - The ID of the user to retrieve.
+ * @returns The user object, or `null` if not found.
+ */
+export const getUser = async (id: string) => {
+  const user = await db.user.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  return user;
 };

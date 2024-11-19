@@ -2,6 +2,7 @@ import { type AuthUserTypes, getAuthUserDetails } from '@/lib/queries/user-queri
 
 // Define the conditions
 const conditionsMap = {
+  isAuthenticated: (user: AuthUserTypes) => !!user,
   hasAgency: (user: AuthUserTypes) => !!user.Agency,
 } as const;
 

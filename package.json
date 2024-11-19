@@ -66,6 +66,7 @@
     "@sentry/nextjs": "^8.34.0",
     "@spotlightjs/spotlight": "^2.5.0",
     "@t3-oss/env-nextjs": "^0.11.1",
+    "@tanstack/react-table": "^8.20.5",
     "@tremor/react": "^3.18.4",
     "@uploadthing/react": "^7.1.0",
     "class-variance-authority": "^0.7.0",

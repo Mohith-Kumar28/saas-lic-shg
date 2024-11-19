@@ -5,6 +5,7 @@ import { NextIntlClientProvider, useMessages } from 'next-intl';
 import { unstable_setRequestLocale } from 'next-intl/server';
 import { ThemeProvider } from 'next-themes';
 
+import { Toaster } from '@/components/ui/toaster';
 import ModalProvider from '@/providers/modal-provider';
 import { AppConfig } from '@/utils/AppConfig';
 
@@ -64,6 +65,7 @@ export default function RootLayout(props: {
             messages={messages}
           >
             <ModalProvider>
+              <Toaster />
               {props.children}
             </ModalProvider>
           </NextIntlClientProvider>
