@@ -3,7 +3,7 @@ import React from 'react';
 import AgencyDetails from '@/components/forms/agency-details';
 import UserDetails from '@/components/forms/user-details';
 import withAuthChecks from '@/components/wrappers/auth-wrapper';
-import { db } from '@/lib/DB';
+import { getAgencyDetails } from '@/lib/queries/agency-queries';
 import type { AuthUserTypes } from '@/lib/queries/user-queries';
 
 type Props = {
@@ -12,14 +12,7 @@ type Props = {
 };
 
 const SettingsPage = withAuthChecks(['hasAgency'], async ({ params, user }: Props) => {
-  const agencyDetails = await db.agency.findUnique({
-    where: {
-      id: params.agencyId,
-    },
-    include: {
-      SubAccount: true,
-    },
-  });
+  const agencyDetails = await getAgencyDetails(params.agencyId);
 
   // const agencyDetails = user.Agency;
   if (!agencyDetails) {

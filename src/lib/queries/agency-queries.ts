@@ -10,6 +10,18 @@ import { urls } from '@/constants/global-constants';
 import { db } from '../DB';
 import { logger } from '../Logger';
 
+export const getAgencyDetails = async (agencyId: string) => {
+  const response = await db.agency.findUnique({
+    where: {
+      id: agencyId,
+    },
+    include: {
+      SubAccount: true,
+    },
+  });
+  return response;
+};
+
 /**
  * Updates the details of an agency in the database.
  *

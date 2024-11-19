@@ -39,7 +39,7 @@ const formSchema = z.object({
   companyPhone: z.string().min(1),
   address: z.string(),
   city: z.string(),
-  subAccountLogo: z.string(),
+  subAccountLogo: z.string().optional(),
   zipCode: z.string(),
   state: z.string(),
   country: z.string(),
@@ -82,7 +82,7 @@ const SubAccountDetails: React.FC<SubAccountDetailsProps> = ({
       const response = await upsertSubAccount({
         id: details?.id ? details.id : v4(),
         address: values.address,
-        subAccountLogo: values.subAccountLogo,
+        subAccountLogo: values.subAccountLogo ?? '',
         city: values.city,
         companyPhone: values.companyPhone,
         country: values.country,
@@ -125,7 +125,7 @@ const SubAccountDetails: React.FC<SubAccountDetailsProps> = ({
     if (details) {
       form.reset(details);
     }
-  }, [details]);
+  }, [details, form]);
 
   const isLoading = form.formState.isSubmitting;
   // CHALLENGE Create this form.

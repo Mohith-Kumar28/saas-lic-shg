@@ -83,7 +83,7 @@ model Agency {
   connectAccountId String?               @default("")
   customerId       String                @default("")
   name             String
-  agencyLogo       String?                @db.Text @default("")
+  agencyLogo       String?               @db.Text @default("")
   companyEmail     String                @db.Text
   companyPhone     String
   whiteLabel       Boolean               @default(true)
@@ -108,7 +108,7 @@ model SubAccount {
   id               String                    @id @default(uuid())
   connectAccountId String?                   @default("")
   name             String
-  subAccountLogo   String                    @db.Text
+  subAccountLogo   String                    @db.Text @default("")
   createdAt        DateTime                  @default(now())
   updatedAt        DateTime                  @updatedAt
   companyEmail     String                    @db.Text

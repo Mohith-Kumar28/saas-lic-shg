@@ -22,7 +22,7 @@ export const upsertSubAccount = async (subAccount: SubAccount) => {
     },
   });
   if (!agencyOwner) {
-    return logger.error('🔴Erorr could not create subaccount');
+    return logger.error('🔴Error could not create subaccount');
   }
   const permissionId = v4();
   const response = await db.subAccount.upsert({
@@ -88,6 +88,30 @@ export const upsertSubAccount = async (subAccount: SubAccount) => {
           },
         ],
       },
+    },
+  });
+  return response;
+};
+
+/**
+ * Retrieves the details of a sub-account by its ID.
+ *
+ * @param subaccountId - The unique identifier of the sub-account.
+ * @returns The sub-account details.
+ */
+export const getSubaccountDetails = async (subaccountId: string) => {
+  const response = await db.subAccount.findUnique({
+    where: {
+      id: subaccountId,
+    },
+  });
+  return response;
+};
+
+export const deleteSubaccount = async (subaccountId: string) => {
+  const response = await db.subAccount.delete({
+    where: {
+      id: subaccountId,
     },
   });
   return response;
