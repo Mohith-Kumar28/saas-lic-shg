@@ -1,15 +1,16 @@
 'use client';
 import type { Role } from '@prisma/client';
-import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import { BellIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import { roles } from '@/constants/global-constants';
 import type { NotificationWithUser } from '@/types/global-types';
 
 // import type { NotificationWithUser } from '@/lib/types';
 import { ModeToggle } from '../global/mode-toggle';
 import UserAccountButton from '../molecules/user-account-button';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Card } from '../ui/card';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '../ui/sheet';
 import { Switch } from '../ui/switch';
@@ -59,7 +60,7 @@ const InfoBar = ({ notifications, subAccountId, className, role }: Props) => {
               <SheetHeader className="text-left">
                 <SheetTitle>Notifications</SheetTitle>
                 <SheetDescription>
-                  {(role === 'AGENCY_ADMIN' || role === 'AGENCY_OWNER') && (
+                  {(role === roles.AGENCY_ADMIN || roles.AGENCY_OWNER) && (
                     <Card className="flex items-center justify-between p-4">
                       Current Subaccount
                       <Switch onCheckedChange={handleClick} />
@@ -67,12 +68,12 @@ const InfoBar = ({ notifications, subAccountId, className, role }: Props) => {
                   )}
                 </SheetDescription>
               </SheetHeader>
-              {allNotifications?.map(notification => (
-                <div
-                  key={notification.id}
-                  className="mb-2 flex flex-col gap-y-2 overflow-x-scroll text-ellipsis"
-                >
-                  <div className="flex gap-2">
+              <div
+
+                className="my-6  flex flex-col gap-y-6 overflow-x-scroll text-ellipsis"
+              >
+                {allNotifications?.map(notification => (
+                  <div key={notification.id} className="flex gap-2">
                     <Avatar>
                       <AvatarImage
                         src={notification.User.avatarUrl}
@@ -95,12 +96,13 @@ const InfoBar = ({ notifications, subAccountId, className, role }: Props) => {
                         </span>
                       </p>
                       <small className="text-xs text-muted-foreground">
-                        {new Date(notification.createdAt).toLocaleDateString()}
+
+                        {new Date(notification.createdAt).toLocaleString()}
                       </small>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
               {allNotifications?.length === 0 && (
                 <div
                   className="flex items-center justify-center text-muted-foreground"
