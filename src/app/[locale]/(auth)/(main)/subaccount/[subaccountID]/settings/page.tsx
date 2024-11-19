@@ -1,6 +1,5 @@
 import SubAccountDetails from '@/components/forms/subaccount-details';
 import UserDetails from '@/components/forms/user-details';
-import BlurPage from '@/components/global/blur-page';
 import withAuthChecks from '@/components/wrappers/auth-wrapper';
 import { getAgencyDetails } from '@/lib/queries/agency-queries';
 import { getSubaccountDetails } from '@/lib/queries/sub-account-queries';
@@ -23,22 +22,22 @@ const SubaccountSettingPage = withAuthChecks(['hasAgency', 'hasSubAccount'], asy
   const subAccounts = agencyDetails.SubAccount;
 
   return (
-    <BlurPage>
-      <div className="flex flex-col gap-4 lg:!flex-row">
-        <SubAccountDetails
-          agencyDetails={agencyDetails}
-          details={subAccount}
-          _userId={user.id}
-          userName={user.name}
-        />
-        <UserDetails
-          type="subaccount"
-          id={params.subaccountId}
-          subAccounts={subAccounts}
-          userData={user}
-        />
-      </div>
-    </BlurPage>
+
+    <div className="flex flex-col gap-4 lg:!flex-row">
+      <SubAccountDetails
+        agencyDetails={agencyDetails}
+        details={subAccount}
+        _userId={user.id}
+        userName={user.name}
+      />
+      <UserDetails
+        type="subaccount"
+        id={params.subaccountId}
+        subAccounts={subAccounts}
+        userData={user}
+      />
+    </div>
+
   );
 });
 

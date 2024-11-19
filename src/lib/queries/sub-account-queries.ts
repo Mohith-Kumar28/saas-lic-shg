@@ -5,6 +5,7 @@ import type {
 import { v4 } from 'uuid';
 
 import { roles, urls } from '@/constants/global-constants';
+import type { SubAccountWithContacts } from '@/types/global-types';
 
 import { db } from '../DB';
 import { logger } from '../Logger';
@@ -112,6 +113,29 @@ export const deleteSubaccount = async (subaccountId: string) => {
   const response = await db.subAccount.delete({
     where: {
       id: subaccountId,
+    },
+  });
+  return response;
+};
+
+export const getSubaccountContacts = async (subaccountId: string): Promise<SubAccountWithContacts | null> => {
+  const response = await db.subAccount.findUnique({
+    where: {
+      id: subaccountId,
+    },
+    include: {
+      Contact: {
+        include: {
+          Ticket: {
+            select: {
+              value: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: 'asc',
+        },
+      },
     },
   });
   return response;
