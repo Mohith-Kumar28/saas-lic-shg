@@ -1,9 +1,9 @@
 import React from 'react';
 
-const page = () => {
+const AgencyDashboard = () => {
   return (
     <div>pahige</div>
   );
 };
 
-export default page;
+export default AgencyDashboard;
