@@ -63,6 +63,7 @@ model User {
   Ticket       Ticket[]
   Notification Notification[]
 
+
   @@index([agencyId])
 }
 
@@ -131,6 +132,7 @@ model SubAccount {
   Pipeline         Pipeline[]
   Tags             Tag[]
   Notification     Notification[]
+  Invitation       Invitation[]
 
   @@index([agencyId])
 }
@@ -262,13 +264,12 @@ model Action {
 
 model Contact {
   id           String   @id @default(uuid())
-  name         String
+  name         String?
   email        String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   subAccountId String
-
-  Subaccount SubAccount @relation(fields: [subAccountId], references: [id], onDelete: Cascade)
+  Subaccount SubAccount @relation(fields: [subAccountId], references: [id], onDelete: Cascade) 
   Ticket     Ticket[]
 
   @@index([subAccountId])
@@ -371,10 +372,14 @@ model Invitation {
   email    String           @unique
   agencyId String
   Agency   Agency           @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  SubAccount   SubAccount?   @relation(fields: [subaccountId], references: [id], onDelete: Cascade)
+  subaccountId String?
   status   InvitationStatus @default(PENDING)
   role     Role             @default(SUB_ACCOUNT_USER)
 
   @@index([agencyId])
+  @@index([email])
+  @@index([subaccountId])
 }
 
 model Notification {

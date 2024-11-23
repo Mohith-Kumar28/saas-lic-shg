@@ -35,10 +35,11 @@ import {
 } from '../ui/select';
 
 type SendInvitationProps = {
-  agencyId: string;
+  agencyId?: string;
+  subaccountId?: string;
 };
 
-const SendInvitation: React.FC<SendInvitationProps> = ({ agencyId }) => {
+const SendInvitation: React.FC<SendInvitationProps> = ({ agencyId, subaccountId }) => {
   const { toast } = useToast();
   const userDataSchema = z.object({
     email: z.string().email(),
@@ -50,17 +51,17 @@ const SendInvitation: React.FC<SendInvitationProps> = ({ agencyId }) => {
     mode: 'onChange',
     defaultValues: {
       email: '',
-      role: roles.SUB_ACCOUNT_USER,
+      role: roles.SUB_ACCOUNT_GUEST,
     },
   });
 
   const onSubmit = async (values: z.infer<typeof userDataSchema>) => {
     try {
-      const res = await sendInvitation(values.role, values.email, agencyId);
+      const res = await sendInvitation({ role: values.role, email: values.email, agencyId, subaccountId });
       await saveActivityLogsNotification({
         agencyId,
-        description: `Invited ${res.email}`,
-        subaccountId: undefined,
+        description: `Sent invitation to ${res.email}`,
+        subaccountId,
       });
 
       toast({
@@ -72,7 +73,7 @@ const SendInvitation: React.FC<SendInvitationProps> = ({ agencyId }) => {
       toast({
         variant: 'destructive',
         title: 'Oppse!',
-        description: 'Could not send invitation',
+        description: 'Could not send invitation | Invitation already sent',
       });
     }
   };

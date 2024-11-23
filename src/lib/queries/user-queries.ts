@@ -7,6 +7,7 @@ import type {
   User,
 } from '@prisma/client';
 import { redirect } from 'next/navigation';
+import { v4 } from 'uuid';
 
 import { roles, urls } from '@/constants/global-constants';
 
@@ -154,7 +155,7 @@ export const saveActivityLogsNotification = async ({
   description: string;
   subaccountId?: string;
 }) => {
-  const authUser = await currentUser();
+  const authUser = await getClerkAuthUserDetails();
   let userData;
   if (!authUser) {
     const response = await db.user.findFirst({
@@ -233,6 +234,38 @@ export const saveActivityLogsNotification = async ({
 };
 
 /**
+ * Updates the permissions for a user in a sub-account.
+ *
+ * @param permissionId - The ID of the permission to update, or undefined to create a new permission.
+ * @param userEmail - The email address of the user whose permissions are being updated.
+ * @param subAccountId - The ID of the sub-account the user belongs to.
+ * @param permission - A boolean indicating whether the user should have access or not.
+ * @returns The updated or created permission object, or null if an error occurs.
+ */
+export const changeUserPermissions = async (
+  permissionId: string | undefined,
+  userEmail: string,
+  subAccountId: string,
+  permission: boolean,
+) => {
+  try {
+    const response = await db.permissions.upsert({
+      where: { id: permissionId },
+      update: { access: permission },
+      create: {
+        access: permission,
+        email: userEmail,
+        subAccountId,
+      },
+    });
+    return response;
+  } catch (error) {
+    logger.error('🔴Could not change permission', error);
+    return null;
+  }
+};
+
+/**
  * Creates a new team user with the provided user details.
  *
  * This function creates a new user record in the database with the provided user details, except if the user's role is 'AGENCY_OWNER', in which case it returns null.
@@ -258,6 +291,7 @@ export const createTeamUser = async (agencyId: string, user: User) => {
  */
 export const verifyAndAcceptInvitation = async () => {
   const user = await currentUser();
+
   if (!user) {
     return redirect(urls.SIGN_IN);
   }
@@ -279,6 +313,7 @@ export const verifyAndAcceptInvitation = async () => {
       createdAt: new Date(),
       updatedAt: new Date(),
     });
+
     await saveActivityLogsNotification({
       agencyId: invitationExists?.agencyId,
       description: `Joined`,
@@ -286,6 +321,14 @@ export const verifyAndAcceptInvitation = async () => {
     });
 
     if (userDetails) {
+      if (invitationExists.subaccountId) {
+        await changeUserPermissions(
+          v4(),
+          userDetails?.email,
+          invitationExists.subaccountId,
+          true,
+        );
+      }
       await clerkClient.users.updateUserMetadata(user.id, {
         privateMetadata: {
           role: userDetails.role || roles.SUB_ACCOUNT_USER,
@@ -301,12 +344,13 @@ export const verifyAndAcceptInvitation = async () => {
       return null;
     }
   } else {
-    const agency = await db.user.findUnique({
+    const userFromDB = await db.user.findUnique({
       where: {
         email: user?.emailAddresses[0]?.emailAddress,
       },
     });
-    return agency ? agency.agencyId : null;
+
+    return userFromDB ? userFromDB.agencyId : null;
   }
 };
 
@@ -369,38 +413,6 @@ export const updateUser = async (user: Partial<User>) => {
 };
 
 /**
- * Updates the permissions for a user in a sub-account.
- *
- * @param permissionId - The ID of the permission to update, or undefined to create a new permission.
- * @param userEmail - The email address of the user whose permissions are being updated.
- * @param subAccountId - The ID of the sub-account the user belongs to.
- * @param permission - A boolean indicating whether the user should have access or not.
- * @returns The updated or created permission object, or null if an error occurs.
- */
-export const changeUserPermissions = async (
-  permissionId: string | undefined,
-  userEmail: string,
-  subAccountId: string,
-  permission: boolean,
-) => {
-  try {
-    const response = await db.permissions.upsert({
-      where: { id: permissionId },
-      update: { access: permission },
-      create: {
-        access: permission,
-        email: userEmail,
-        subAccountId,
-      },
-    });
-    return response;
-  } catch (error) {
-    logger.error('🔴Could not change permission', error);
-    return null;
-  }
-};
-
-/**
  * Sends an invitation to the specified email address with the given role and agency ID.
  *
  * @param role - The role to assign to the invited user.
@@ -409,12 +421,36 @@ export const changeUserPermissions = async (
  * @returns The created invitation object.
  */
 export const sendInvitation = async (
-  role: Role,
-  email: string,
-  agencyId: string,
+  { role, email, agencyId, subaccountId }: {
+    role: Role;
+    email: string;
+    agencyId?: string;
+    subaccountId?: string;
+  },
 ) => {
-  const resposne = await db.invitation.create({
-    data: { email, agencyId, role },
+  let foundOrGivenAgencyId = agencyId;
+
+  if (!foundOrGivenAgencyId && !subaccountId) {
+    throw new Error(
+      'You need to provide at least an agency Id or subaccount Id',
+    );
+  }
+
+  if (subaccountId) {
+    const subaccountRes = await db.subAccount.findUnique({
+      where: { id: subaccountId },
+    });
+    if (subaccountRes) {
+      foundOrGivenAgencyId = subaccountRes.agencyId;
+    }
+  }
+
+  if (!foundOrGivenAgencyId) {
+    throw new Error('Agency Id could not be determined');
+  }
+
+  const InvitationResponse = await db.invitation.create({
+    data: { email, agencyId: foundOrGivenAgencyId, role, subaccountId },
   });
 
   try {
@@ -428,10 +464,10 @@ export const sendInvitation = async (
     });
   } catch (error) {
     logger.error(error);
-    throw error;
+    // throw error;
   }
 
-  return resposne;
+  return InvitationResponse;
 };
 
 /**

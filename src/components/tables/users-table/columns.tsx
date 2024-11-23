@@ -47,7 +47,8 @@ const CellActions: React.FC<CellActionsProps> = ({ rowData }) => {
   if (!rowData) {
     return;
   }
-  if (!rowData.Agency) {
+
+  if (!rowData.Agency && !rowData.Permissions) {
     return;
   }
 
@@ -184,53 +185,53 @@ export const columns: ColumnDef<UsersWithAgencySubAccountPermissions>[]
     },
     { accessorKey: 'email', header: 'Email' },
 
-    {
-      accessorKey: 'SubAccount',
-      header: 'Owned Accounts',
-      cell: ({ row }) => {
-        const isAgencyOwner = row.getValue('role') === roles.AGENCY_OWNER;
-        const rowOriginal = row.original;
-        const ownedAccounts: { id: string; SubAccount: { name: string } }[] = rowOriginal?.Permissions.filter(
-          (per: { access: boolean }) => per.access,
-        );
+    // {
+    //   accessorKey: 'SubAccount',
+    //   header: 'Owned Accounts',
+    //   cell: ({ row }) => {
+    //     const isAgencyOwner = row.getValue('role') === roles.AGENCY_OWNER;
+    //     const rowOriginal = row.original;
+    //     const ownedAccounts: { id: string; SubAccount: { name: string } }[] = rowOriginal?.Permissions.filter(
+    //       (per: { access: boolean }) => per.access,
+    //     );
 
-        if (isAgencyOwner) {
-          return (
-            <div className="flex flex-col items-start">
-              <div className="flex flex-col gap-2">
-                <Badge className="whitespace-nowrap bg-slate-600">
-                  Agency -
-                  {' '}
-                  {row?.original?.Agency?.name}
-                </Badge>
-              </div>
-            </div>
-          );
-        }
-        return (
-          <div className="flex flex-col items-start">
-            <div className="flex flex-col gap-2">
-              {ownedAccounts?.length
-                ? (
-                    ownedAccounts.map(account => (
-                      <Badge
-                        key={account.id}
-                        className="w-fit whitespace-nowrap bg-slate-600"
-                      >
-                        Sub Account -
-                        {' '}
-                        {account.SubAccount.name}
-                      </Badge>
-                    ))
-                  )
-                : (
-                    <div className="text-muted-foreground">No Access Yet</div>
-                  )}
-            </div>
-          </div>
-        );
-      },
-    },
+    //     if (isAgencyOwner) {
+    //       return (
+    //         <div className="flex flex-col items-start">
+    //           <div className="flex flex-col gap-2">
+    //             <Badge className="whitespace-nowrap bg-slate-600">
+    //               Agency -
+    //               {' '}
+    //               {row?.original?.Agency?.name}
+    //             </Badge>
+    //           </div>
+    //         </div>
+    //       );
+    //     }
+    //     return (
+    //       <div className="flex flex-col items-start">
+    //         <div className="flex flex-col gap-2">
+    //           {ownedAccounts?.length
+    //             ? (
+    //                 ownedAccounts.map(account => (
+    //                   <Badge
+    //                     key={account.id}
+    //                     className="w-fit whitespace-nowrap bg-slate-600"
+    //                   >
+    //                     Sub Account -
+    //                     {' '}
+    //                     {account.SubAccount.name}
+    //                   </Badge>
+    //                 ))
+    //               )
+    //             : (
+    //                 <div className="text-muted-foreground">No Access Yet</div>
+    //               )}
+    //         </div>
+    //       </div>
+    //     );
+    //   },
+    // },
     {
       accessorKey: 'role',
       header: 'Role',

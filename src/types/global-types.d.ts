@@ -1,11 +1,9 @@
 import type {
-  Contact,
   Notification,
   Role,
-  SubAccount,
-  Ticket,
 } from '@prisma/client';
 
+import type { getSubaccountContacts } from '@/lib/queries/sub-account-queries';
 import type { getAuthUserDetails, getTeamUsers, getUserPermissions } from '@/lib/queries/user-queries';
 
 // Use type safe message keys with `next-intl`
@@ -45,6 +43,7 @@ export type UsersWithAgencySubAccountPermissions =
     typeof getTeamUsers
   >;
 
-export type SubAccountWithContacts = SubAccount & {
-  Contact: (Contact & { Ticket: Ticket[] })[];
-};
+export type SubAccountContacts =
+  Prisma.PromiseReturnType<
+    typeof getSubaccountContacts
+  >;

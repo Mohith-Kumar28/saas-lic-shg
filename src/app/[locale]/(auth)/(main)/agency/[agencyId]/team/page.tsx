@@ -2,12 +2,11 @@ import { Plus } from 'lucide-react';
 import React from 'react';
 
 import SendInvitation from '@/components/forms/send-invitation';
+import { columns } from '@/components/tables/users-table/columns';
+import DataTable from '@/components/tables/users-table/data-table';
 import withAuthChecks from '@/components/wrappers/auth-wrapper';
 import { getAgencyDetails } from '@/lib/queries/agency-queries';
 import { getTeamUsers } from '@/lib/queries/user-queries';
-
-import { columns } from './columns';
-import DataTable from './data-table';
 
 type Props = {
   params: { agencyId: string };

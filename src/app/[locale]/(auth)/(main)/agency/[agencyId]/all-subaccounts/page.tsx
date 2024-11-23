@@ -23,6 +23,7 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
+import { urls } from '@/constants/global-constants';
 import { getAuthUserDetails } from '@/lib/queries/user-queries';
 
 import CreateSubaccountButton from './_components/create-subaccount-btn';
@@ -59,7 +60,7 @@ const AllSubaccountsPage = async ({ params }: Props) => {
                         className="my-2 h-32 cursor-pointer rounded-lg border border-border !bg-background p-4 text-primary transition-all hover:!bg-background"
                       >
                         <Link
-                          href={`/subaccount/${subaccount.id}`}
+                          href={`${urls.SUB_ACCOUNT}/${subaccount.id}`}
                           className="flex size-full gap-4"
                         >
                           <div className="relative w-32">

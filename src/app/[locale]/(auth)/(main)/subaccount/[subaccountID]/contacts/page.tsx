@@ -1,20 +1,10 @@
-import type { Ticket } from '@prisma/client';
-import { format } from 'date-fns/format';
+import { Plus } from 'lucide-react';
 import React from 'react';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import SendInvitation from '@/components/forms/send-invitation';
+import { columns } from '@/components/tables/users-table/columns';
+import DataTable from '@/components/tables/users-table/data-table';
 import { getSubaccountContacts } from '@/lib/queries/sub-account-queries';
-
-import CreateContactButton from './_components/create-contact-btn';
 
 type Props = {
   params: { subaccountId: string };
@@ -23,28 +13,28 @@ type Props = {
 const ContactPage = async ({ params }: Props) => {
   const contacts = await getSubaccountContacts(params.subaccountId);
 
-  const allContacts = contacts?.Contact ?? [];
+  const allContacts = contacts ?? [];
 
-  const formatTotal = (tickets: Ticket[]) => {
-    if (!tickets || !tickets.length) {
-      return '$0.00';
-    }
-    const amt = new Intl.NumberFormat(undefined, {
-      style: 'currency',
-      currency: 'USD',
-    });
+  // const formatTotal = (tickets: Ticket[]) => {
+  //   if (!tickets || !tickets.length) {
+  //     return '$0.00';
+  //   }
+  //   const amt = new Intl.NumberFormat(undefined, {
+  //     style: 'currency',
+  //     currency: 'USD',
+  //   });
 
-    const laneAmt = tickets.reduce(
-      (sum, ticket) => sum + (Number(ticket?.value) || 0),
-      0,
-    );
+  //   const laneAmt = tickets.reduce(
+  //     (sum, ticket) => sum + (Number(ticket?.value) || 0),
+  //     0,
+  //   );
 
-    return amt.format(laneAmt);
-  };
+  //   return amt.format(laneAmt);
+  // };
   return (
     <section>
       <h1 className="p-4 text-4xl">Contacts</h1>
-      <CreateContactButton subaccountId={params.subaccountId} />
+      {/* <CreateContactButton subaccountId={params.subaccountId} />
       <Table>
         <TableHeader>
           <TableRow>
@@ -62,7 +52,7 @@ const ContactPage = async ({ params }: Props) => {
                 <Avatar>
                   <AvatarImage alt="@shadcn" />
                   <AvatarFallback className="bg-primary text-white">
-                    {contact.name.slice(0, 2).toUpperCase()}
+                    {contact.name?.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
               </TableCell>
@@ -83,7 +73,21 @@ const ContactPage = async ({ params }: Props) => {
             </TableRow>
           ))}
         </TableBody>
-      </Table>
+      </Table> */}
+
+      <DataTable
+        actionButtonText={(
+          <>
+            <Plus size={15} />
+            Add
+          </>
+        )}
+        modalChildren={<SendInvitation subaccountId={params.subaccountId} />}
+        filterValue="name"
+        columns={columns}
+        data={allContacts}
+      >
+      </DataTable>
     </section>
   );
 };

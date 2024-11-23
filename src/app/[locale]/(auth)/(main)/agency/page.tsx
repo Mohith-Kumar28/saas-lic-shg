@@ -3,21 +3,21 @@ import { redirect } from 'next/navigation';
 import React from 'react';
 
 import AgencyDetails from '@/components/forms/agency-details';
-import withAuthChecks from '@/components/wrappers/auth-wrapper';
 import { roles, urls } from '@/constants/global-constants';
 import { logger } from '@/lib/Logger';
-import { type AuthUserTypes, getClerkAuthUserDetails, verifyAndAcceptInvitation } from '@/lib/queries/user-queries';
+import { getAuthUserDetails, verifyAndAcceptInvitation } from '@/lib/queries/user-queries';
 
-const AgencyPage = withAuthChecks([], async ({
+const AgencyPage = async ({
   searchParams,
-  user,
+
 }: {
   searchParams: { plan: Plan; state: string; code: string };
-  user: AuthUserTypes;
+
 }) => {
   const agencyId = await verifyAndAcceptInvitation();
   logger.info(agencyId);
 
+  const user = await getAuthUserDetails();
   if (agencyId) {
     if (user?.isSubAccountGuest || user?.isSubAccountUser) {
       return redirect(urls.SUB_ACCOUNT);
@@ -41,15 +41,14 @@ const AgencyPage = withAuthChecks([], async ({
       return <div>Not authorized</div>;
     }
   }
-  const authUser = await getClerkAuthUserDetails();
 
   return (
     <div className="mt-4 flex items-center justify-center">
       <AgencyDetails
-        data={{ companyEmail: authUser?.emailAddresses[0]?.emailAddress }}
+        data={{ companyEmail: user?.email }}
       />
     </div>
   );
-});
+};
 
 export default AgencyPage;

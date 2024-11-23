@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 
-import ContactUserForm from '@/components/forms/contact-user-form';
+import SendInvitation from '@/components/forms/send-invitation';
 import CustomModal from '@/components/global/custom-modal';
 import { Button } from '@/components/ui/button';
 import { useModal } from '@/providers/modal-provider';
@@ -16,10 +16,11 @@ const CreateContactButton = ({ subaccountId }: Props) => {
   const handleCreateContact = async () => {
     setOpen(
       <CustomModal
-        title="Create Or Update Contact information"
-        subheading="Contacts are like customers."
+        title="Add a contact"
+        subheading="Contacts are like members."
       >
-        <ContactUserForm subaccountId={subaccountId} />
+        {/* <ContactUserForm subaccountId={subaccountId} /> */}
+        <SendInvitation subaccountId={subaccountId} />
       </CustomModal>,
     );
   };

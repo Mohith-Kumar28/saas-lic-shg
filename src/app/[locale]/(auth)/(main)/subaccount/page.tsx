@@ -2,22 +2,17 @@ import { redirect } from 'next/navigation';
 import React from 'react';
 
 import Unauthorized from '@/components/global';
-import withAuthChecks from '@/components/wrappers/auth-wrapper';
-import { type AuthUserTypes, verifyAndAcceptInvitation } from '@/lib/queries/user-queries';
+import { getAuthUserDetails, verifyAndAcceptInvitation } from '@/lib/queries/user-queries';
 
-type Props = {
-  _searchParams: { state: string; code: string };
-  user: AuthUserTypes;
-};
-
-const SubAccountMainPage = withAuthChecks([], async ({ _searchParams, user }: Props) => {
+const SubAccountMainPage = async () => {
   const agencyId = await verifyAndAcceptInvitation();
 
   if (!agencyId) {
     return <Unauthorized />;
   }
+  const user = await getAuthUserDetails();
 
-  const getFirstSubaccountWithAccess = user.Permissions.find(
+  const getFirstSubaccountWithAccess = user?.Permissions.find(
     permission => permission.access === true,
   );
 
@@ -38,6 +33,6 @@ const SubAccountMainPage = withAuthChecks([], async ({ _searchParams, user }: Pr
   }
 
   return <Unauthorized />;
-});
+};
 
 export default SubAccountMainPage;

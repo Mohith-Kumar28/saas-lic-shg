@@ -52,7 +52,10 @@ const ContactUserForm: React.FC<ContactUserFormProps> = ({ subaccountId }) => {
 
   useEffect(() => {
     if (data.contact) {
-      form.reset(data.contact);
+      form.reset({
+        ...data.contact,
+        name: data.contact.name || '',
+      });
     }
   }, [data, form]);
 
