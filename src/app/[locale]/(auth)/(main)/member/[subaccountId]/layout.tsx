@@ -36,7 +36,7 @@ const SubaccountLayout = withAuthChecks(['hasAgency', 'isMember'], async ({ chil
     );
 
     if (!hasPermission) {
-      // return <Unauthorized />;
+      return <Unauthorized />;
     }
 
     const allNotifications = await getNotificationAndUser(agencyId);
