@@ -15,7 +15,7 @@ type Props = {
   user: AuthUserTypes;
 };
 
-const SubaccountLayout = withAuthChecks(['hasAgency'], async ({ children, params, user }: Props) => {
+const SubaccountLayout = withAuthChecks(['hasAgency', 'isMember'], async ({ children, params, user }: Props) => {
   const agencyId = await verifyAndAcceptInvitation();
   if (!agencyId) {
     return <Unauthorized />;

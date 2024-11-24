@@ -13,7 +13,7 @@ type Props = {
   user: AuthUserTypes;
 };
 
-const Sidebar = withAuthChecks(['hasAgency'], async ({ id, type, user }: Props) => {
+const Sidebar = withAuthChecks(['hasAgency', 'isMember'], async ({ id, type, user }: Props) => {
   if (!user.Agency) {
     return;
   }
