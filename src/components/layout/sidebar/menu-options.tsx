@@ -3,6 +3,7 @@
 import type {
   Agency,
   AgencySidebarOption,
+  MemberSidebarOption,
   SubAccount,
   SubAccountSidebarOption,
 } from '@prisma/client';
@@ -34,7 +35,7 @@ import { useModal } from '@/providers/modal-provider';
 type Props = {
   defaultOpen?: boolean;
   subAccounts: SubAccount[];
-  sidebarOpt: AgencySidebarOption[] | SubAccountSidebarOption[];
+  sidebarOpt: AgencySidebarOption[] | SubAccountSidebarOption[] | MemberSidebarOption[];
   sidebarLogo: string;
   details: any;
   user: AuthUserTypes;

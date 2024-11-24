@@ -58,11 +58,12 @@ export const urls: { [key in Url]: string } = {
   MEMBERS: '/members',
 };
 
-export type AccountTypes = 'AGENCY' | 'SUB_ACCOUNT';
+export type AccountTypes = 'AGENCY' | 'SUB_ACCOUNT' | 'MEMBER';
 
 export const accountTypes: { [key in AccountTypes]: string } = {
   AGENCY: 'agency',
   SUB_ACCOUNT: 'subaccount',
+  MEMBER: 'member',
 };
 
 export const icons = [

@@ -28,7 +28,7 @@ const MemberPage = async (
   logger.info(member);
 
   if (member) {
-    return redirect(`${urls.MEMBER}/${member.id}`);
+    return redirect(`${urls.MEMBER}/${member.subAccountId}`);
   }
 
   return (

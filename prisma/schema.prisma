@@ -62,9 +62,8 @@ model User {
   Permissions  Permissions[]
   Ticket       Ticket[]
   Notification Notification[]
-  Member       Member[]
-
-
+  Member       Member?           
+ 
   @@index([agencyId])
 }
 
@@ -156,8 +155,7 @@ model Member {
   subAccountId     String                     
   SubAccount           SubAccount                    @relation(fields: [subAccountId], references: [id], onDelete: Cascade)
   SidebarOption    MemberSidebarOption[]                    
-  User       User        @relation(fields: [email], references: [email], onDelete: Cascade)
-
+    User          User     @relation(fields: [email], references: [email], onDelete: Cascade)   
   @@index([subAccountId])
 }
 

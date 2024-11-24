@@ -36,6 +36,11 @@ export type AuthUserTypes = Prisma.UserGetPayload<{
         };
       };
     };
+    Member: {
+      include: {
+        SidebarOption: true;
+      };
+    };
     Permissions: true;
   };
 }> & {
@@ -63,6 +68,11 @@ export const getAuthUserDetails = async () => {
               SidebarOption: true,
             },
           },
+        },
+      },
+      Member: {
+        include: {
+          SidebarOption: true,
         },
       },
       Permissions: true,
