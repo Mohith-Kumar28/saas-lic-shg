@@ -44,6 +44,7 @@ const layout = withAuthChecks(['hasAgency'], async ({ children, params, user }: 
       <Sidebar
         id={params.agencyId}
         type={accountTypes.AGENCY as AccountTypes}
+        user={user}
       />
       <div className="md:pl-[300px]">
         <InfoBar

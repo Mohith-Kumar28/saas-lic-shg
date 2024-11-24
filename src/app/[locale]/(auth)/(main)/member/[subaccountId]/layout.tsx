@@ -6,7 +6,7 @@ import BlurPage from '@/components/global/blur-page';
 import InfoBar from '@/components/layout/infobar';
 import Sidebar from '@/components/layout/sidebar';
 import withAuthChecks from '@/components/wrappers/auth-wrapper';
-import { urls } from '@/constants/global-constants';
+import { type AccountTypes, accountTypes, urls } from '@/constants/global-constants';
 import { type AuthUserTypes, getNotificationAndUser, verifyAndAcceptInvitation } from '@/lib/queries/user-queries';
 
 type Props = {
@@ -59,8 +59,9 @@ const SubaccountLayout = withAuthChecks(['hasAgency', 'isMember'], async ({ chil
   return (
     <div className="h-screen overflow-hidden">
       <Sidebar
+        user={user}
         id={params.subaccountId}
-        type="member"
+        type={accountTypes.MEMBER as AccountTypes}
       />
 
       <div className="md:pl-[300px]">
