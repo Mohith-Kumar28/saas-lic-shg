@@ -14,7 +14,6 @@ const ContactPage = async ({ params }: Props) => {
   const contacts = await getSubaccountContacts(params.subaccountId);
 
   const allContacts = contacts ?? [];
-
   // const formatTotal = (tickets: Ticket[]) => {
   //   if (!tickets || !tickets.length) {
   //     return '$0.00';

@@ -62,6 +62,7 @@ model User {
   Permissions  Permissions[]
   Ticket       Ticket[]
   Notification Notification[]
+  Member       Member[]
 
 
   @@index([agencyId])
@@ -123,6 +124,7 @@ model SubAccount {
   agencyId         String
   Agency           Agency                    @relation(fields: [agencyId], references: [id], onDelete: Cascade)
   SidebarOption    SubAccountSidebarOption[]
+  Member            Member[]
   Permissions      Permissions[]
   Funnels          Funnel[]
   Media            Media[]
@@ -135,6 +137,28 @@ model SubAccount {
   Invitation       Invitation[]
 
   @@index([agencyId])
+}
+
+
+model Member {
+  id               String                    @id @default(uuid())  
+  name             String   
+  phone            String  
+  connectAccountId String?                   @default("")
+  createdAt        DateTime                  @default(now())
+  updatedAt        DateTime                  @updatedAt
+  email            String                    @unique
+  address          String
+  city             String
+  zipCode          String
+  state            String
+  country          String
+  subAccountId     String                     
+  SubAccount           SubAccount                    @relation(fields: [subAccountId], references: [id], onDelete: Cascade)
+  SidebarOption    MemberSidebarOption[]                    
+  User       User        @relation(fields: [email], references: [email], onDelete: Cascade)
+
+  @@index([subAccountId])
 }
 
 model Tag {
@@ -359,6 +383,19 @@ model SubAccountSidebarOption {
   subAccountId String?
 
   @@index([subAccountId])
+}
+
+model MemberSidebarOption {
+  id           String      @id @default(uuid())
+  name         String      @default("Menu")
+  link         String      @default("#")
+  icon         Icon        @default(info)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  Member   Member? @relation(fields: [MemberId], references: [id], onDelete: Cascade)
+  MemberId String?
+
+  @@index([MemberId])
 }
 
 enum InvitationStatus {

@@ -37,7 +37,7 @@ import { roles } from '@/constants/global-constants';
 import { useToast } from '@/hooks/use-toast';
 import { deleteUser, getUser } from '@/lib/queries/user-queries';
 import { useModal } from '@/providers/modal-provider';
-import type { UsersWithAgencySubAccountPermissions } from '@/types/global-types';
+import type { SubAccountContacts, UsersWithAgencySubAccountPermissions } from '@/types/global-types';
 
 const CellActions: React.FC<CellActionsProps> = ({ rowData }) => {
   const { setOpen } = useModal();
@@ -262,5 +262,5 @@ export const columns: ColumnDef<UsersWithAgencySubAccountPermissions>[]
   ];
 
 type CellActionsProps = {
-  rowData: UsersWithAgencySubAccountPermissions;
+  rowData: SubAccountContacts;
 };

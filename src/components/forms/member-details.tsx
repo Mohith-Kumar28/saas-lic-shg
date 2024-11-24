@@ -1,13 +1,13 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { Agency, SubAccount } from '@prisma/client';
-import { useRouter } from 'next/navigation';
+import type { Member } from '@prisma/client';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { v4 } from 'uuid';
 import * as z from 'zod';
 
+import Loading from '@/components/global/loading';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -26,17 +26,13 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { upsertSubAccount } from '@/lib/queries/sub-account-queries';
+import { upsertMember } from '@/lib/queries/member-queries';
 import { saveActivityLogsNotification } from '@/lib/queries/user-queries';
-import { useModal } from '@/providers/modal-provider';
-
-import FileUpload from '../global/file-upload';
-import Loading from '../global/loading';
 
 const formSchema = z.object({
+  email: z.string(),
   name: z.string(),
-  companyEmail: z.string(),
-  companyPhone: z.string().min(1),
+  phone: z.string().min(1),
   address: z.string(),
   city: z.string(),
   subAccountLogo: z.string().optional(),
@@ -45,78 +41,70 @@ const formSchema = z.object({
   country: z.string(),
 });
 
-type SubAccountDetailsProps = {
+type MemberDetailsProps = {
   // To add the sub account to the agency
-  agencyDetails: Agency;
-  details?: Partial<SubAccount>;
-  _userId?: string;
-  userName: string;
+  subAccountId: string;
+  email: string;
+  details?: Partial<Member>;
+
 };
 
-const SubAccountDetails: React.FC<SubAccountDetailsProps> = ({
+const MemberDetails: React.FC<MemberDetailsProps> = ({
   details,
-  agencyDetails,
-  _userId,
-  userName,
+  subAccountId,
+  email,
+
 }) => {
   const { toast } = useToast();
-  const { setClose } = useModal();
-  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      email,
       name: details?.name,
-      companyEmail: details?.companyEmail,
-      companyPhone: details?.companyPhone,
+      phone: details?.phone,
       address: details?.address,
       city: details?.city,
       zipCode: details?.zipCode,
       state: details?.state,
       country: details?.country,
-      subAccountLogo: details?.subAccountLogo,
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const response = await upsertSubAccount({
+      const response = await upsertMember({
         id: details?.id ? details.id : v4(),
         address: values.address,
-        subAccountLogo: values.subAccountLogo ?? '',
-        city: values.city,
-        companyPhone: values.companyPhone,
-        country: values.country,
         name: values.name,
+        city: values.city,
+        country: values.country,
         state: values.state,
         zipCode: values.zipCode,
         createdAt: new Date(),
         updatedAt: new Date(),
-        companyEmail: values.companyEmail,
-        agencyId: agencyDetails.id,
+        email,
+        phone: values?.phone,
+        subAccountId,
         connectAccountId: '',
-        goal: 5000,
+
       });
       if (!response) {
         throw new Error('No response from server');
       }
       await saveActivityLogsNotification({
-        agencyId: response.agencyId,
-        description: `${userName} | updated sub account | ${response.name}`,
-        subaccountId: response.id,
+        description: `updated member account | ${response.email}`,
+        subaccountId: response.subAccountId,
       });
 
       toast({
-        title: 'Subaccount details saved',
-        description: 'Successfully saved your subaccount details.',
+        title: ' details saved',
+        description: 'Successfully saved your details.',
       });
-
-      setClose();
-      router.refresh();
     } catch (error) {
       toast({
         variant: 'destructive',
         title: 'Oppse!',
-        description: `Could not save sub account details : ${error}`,
+        description: `Could not save account details : ${error}`,
       });
     }
   }
@@ -132,8 +120,8 @@ const SubAccountDetails: React.FC<SubAccountDetailsProps> = ({
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Sub Account Information</CardTitle>
-        <CardDescription>Please enter business details</CardDescription>
+        <CardTitle>Create Member</CardTitle>
+        <CardDescription>Please enter your details</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -141,7 +129,7 @@ const SubAccountDetails: React.FC<SubAccountDetailsProps> = ({
             onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-4"
           >
-            <FormField
+            {/* <FormField
               disabled={isLoading}
               control={form.control}
               name="subAccountLogo"
@@ -158,19 +146,20 @@ const SubAccountDetails: React.FC<SubAccountDetailsProps> = ({
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
             <div className="flex gap-4 md:flex-row">
+
               <FormField
                 disabled={isLoading}
                 control={form.control}
-                name="name"
+                name="email"
                 render={({ field }) => (
                   <FormItem className="flex-1">
-                    <FormLabel>Account Name</FormLabel>
+                    <FormLabel> Email</FormLabel>
                     <FormControl>
                       <Input
-                        required
-                        placeholder="Your agency name"
+                        readOnly
+                        placeholder="Email"
                         {...field}
                       />
                     </FormControl>
@@ -181,13 +170,14 @@ const SubAccountDetails: React.FC<SubAccountDetailsProps> = ({
               <FormField
                 disabled={isLoading}
                 control={form.control}
-                name="companyEmail"
+                name="name"
                 render={({ field }) => (
                   <FormItem className="flex-1">
-                    <FormLabel>Acount Email</FormLabel>
+                    <FormLabel>Official Name</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Email"
+                        required
+                        placeholder="Name as per ID"
                         {...field}
                       />
                     </FormControl>
@@ -200,10 +190,10 @@ const SubAccountDetails: React.FC<SubAccountDetailsProps> = ({
               <FormField
                 disabled={isLoading}
                 control={form.control}
-                name="companyPhone"
+                name="phone"
                 render={({ field }) => (
                   <FormItem className="flex-1">
-                    <FormLabel>Acount Phone Number</FormLabel>
+                    <FormLabel> Phone Number</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Phone"
@@ -216,7 +206,6 @@ const SubAccountDetails: React.FC<SubAccountDetailsProps> = ({
                 )}
               />
             </div>
-
             <FormField
               disabled={isLoading}
               control={form.control}
@@ -322,4 +311,4 @@ const SubAccountDetails: React.FC<SubAccountDetailsProps> = ({
   );
 };
 
-export default SubAccountDetails;
+export default MemberDetails;

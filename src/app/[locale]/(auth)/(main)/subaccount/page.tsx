@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import React from 'react';
 
 import Unauthorized from '@/components/global';
+import { urls } from '@/constants/global-constants';
 import { getAuthUserDetails, verifyAndAcceptInvitation } from '@/lib/queries/user-queries';
 
 const SubAccountMainPage = async () => {
@@ -29,7 +30,7 @@ const SubAccountMainPage = async () => {
   // }
 
   if (getFirstSubaccountWithAccess) {
-    return redirect(`/subaccount/${getFirstSubaccountWithAccess.subAccountId}`);
+    return redirect(`${urls.SUB_ACCOUNT}/${getFirstSubaccountWithAccess.subAccountId}`);
   }
 
   return <Unauthorized />;

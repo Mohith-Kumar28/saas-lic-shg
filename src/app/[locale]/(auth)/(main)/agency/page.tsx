@@ -19,8 +19,10 @@ const AgencyPage = async ({
 
   const user = await getAuthUserDetails();
   if (agencyId) {
-    if (user?.isSubAccountGuest || user?.isSubAccountUser) {
+    if (user?.isSubAccountUser) {
       return redirect(urls.SUB_ACCOUNT);
+    } else if (user?.isSubAccountGuest) {
+      return redirect(urls.MEMBER);
     } else if (user?.role === roles.AGENCY_OWNER || user?.role === roles.AGENCY_ADMIN) {
       if (searchParams.plan) {
         return redirect(`${urls.AGENCY}/${agencyId}/${urls.BILLING}?plan=${searchParams.plan}`);

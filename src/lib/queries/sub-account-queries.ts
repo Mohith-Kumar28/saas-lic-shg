@@ -123,12 +123,14 @@ export const getSubaccountContacts = async (subaccountId: string) => {
       Permissions: {
         some: {
           subAccountId: subaccountId,
+          access: true,
         },
       },
     },
     include: {
       Permissions: true,
       Ticket: true,
+      Member: true,
     },
     orderBy: {
       createdAt: 'asc',

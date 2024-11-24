@@ -37,7 +37,7 @@ export const roles: { [key in Role]: Role } = {
   SUB_ACCOUNT_GUEST: 'SUB_ACCOUNT_GUEST',
 };
 
-export type Url = 'SUB_ACCOUNT' | 'SIGN_IN' | 'AGENCY' | 'BILLING' | 'LAUNCHPAD' | 'SETTINGS' | 'ALL_SUB_ACCOUNTS' | 'TEAM' | 'HOME' | 'SIGN_UP' | 'FUNNELS' | 'MEDIA' | 'PIPELINES' | 'CONTACTS';
+export type Url = 'SUB_ACCOUNT' | 'SIGN_IN' | 'AGENCY' | 'BILLING' | 'LAUNCHPAD' | 'SETTINGS' | 'ALL_SUB_ACCOUNTS' | 'TEAM' | 'HOME' | 'SIGN_UP' | 'FUNNELS' | 'MEDIA' | 'PIPELINES' | 'CONTACTS' | 'MEMBER' | 'MEMBERS';
 
 export const urls: { [key in Url]: string } = {
   SUB_ACCOUNT: '/subaccount',
@@ -54,6 +54,8 @@ export const urls: { [key in Url]: string } = {
   ALL_SUB_ACCOUNTS: '/all-subaccounts',
   TEAM: '/team',
   HOME: '/',
+  MEMBER: '/member',
+  MEMBERS: '/members',
 };
 
 export type AccountTypes = 'AGENCY' | 'SUB_ACCOUNT';
